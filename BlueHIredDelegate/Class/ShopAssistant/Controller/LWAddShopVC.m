@@ -68,7 +68,6 @@
 
 
 -(void)requestQueryinviteshopUser{
-    
  
     NSDictionary *dic = @{@"userTel":self.TelTF.text
                           };
@@ -77,7 +76,7 @@
         if (isSuccess) {
             if ([responseObject[@"code"] integerValue] == 0  ) {
                 if ([responseObject[@"data"] integerValue] == 1) {
-                    [self.view showLoadingMeg:@"邀请成功" time:MESSAGE_SHOW_TIME];
+                    [[UIApplication sharedApplication].keyWindow showLoadingMeg:@"邀请成功" time:MESSAGE_SHOW_TIME];
                     [self.navigationController popViewControllerAnimated:YES];
                 }else{
                     [self.view showLoadingMeg:@"邀请失败,请稍后再试" time:MESSAGE_SHOW_TIME];

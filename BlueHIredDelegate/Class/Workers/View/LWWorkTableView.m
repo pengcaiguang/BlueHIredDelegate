@@ -103,6 +103,8 @@ static NSString *LWWorkerCellID = @"LWWorkerCell";
             [self.tableview reloadData];
             if (model.data.workRecordList.count <20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
+
             }
             
         }else{

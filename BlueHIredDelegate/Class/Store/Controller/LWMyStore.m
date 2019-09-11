@@ -15,6 +15,7 @@
 #import "LWShopAssistantManageVC.h"
 #import "LWMyStaff.h"
 #import "LPMainVC.h"
+#import "LWMain2VC.h"
 #import "LWStoerApplyVC.h"
 
 static NSString *LPMineCellID = @"LWMyMineCell";
@@ -43,7 +44,7 @@ static NSString *LPMineCellID = @"LWMyMineCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.TitleArr = @[@"门店二维码",@"门店收入明细",@"门店招工详情",@"企业招聘管理"];
+    self.TitleArr = @[];
    
     [self.view addSubview:self.tableview];
     self.tableview.clipsToBounds = YES;
@@ -68,6 +69,11 @@ static NSString *LPMineCellID = @"LWMyMineCell";
 
 //门店申请
 - (IBAction)TouchStoreApplyFor:(id)sender {
+    if (kAppDelegate.userMaterialModel.data.isReal.integerValue == 0) {
+        [self.view showLoadingMeg:@"您还未实名认证,不能进行门店申请" time:MESSAGE_SHOW_TIME];
+        return;
+    }
+    
     LWStoerApplyVC *vc = [[LWStoerApplyVC alloc] init];
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
@@ -135,20 +141,43 @@ static NSString *LPMineCellID = @"LWMyMineCell";
     //@[@"门店二维码",@"门店招工详情",@"招聘企业"]
     if (kAppDelegate.userMaterialModel.data.role.integerValue == 1 ||
         kAppDelegate.userMaterialModel.data.role.integerValue == 2) {
-        if (indexPath.row == 0) {
-            LWStoreQRCodeVC *vc = [[LWStoreQRCodeVC alloc] init];
-            vc.InfoModel = self.InfoModel;
-            vc.hidesBottomBarWhenPushed = YES;
-            [self.navigationController pushViewController:vc animated:YES];
-        }else if (indexPath.row == 1){
-            LWStoreWorkDetailsVC *vc = [[LWStoreWorkDetailsVC alloc] init];
-            vc.hidesBottomBarWhenPushed = YES;
-            [self.navigationController pushViewController:vc animated:YES];
-        }else if (indexPath.row == 2){
-            LPMainVC *vc =[[LPMainVC alloc] init];
-            vc.hidesBottomBarWhenPushed = YES;
-            [self.navigationController pushViewController:vc animated:YES];
+        if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+            if (indexPath.row == 0) {
+                LWStoreQRCodeVC *vc = [[LWStoreQRCodeVC alloc] init];
+                vc.InfoModel = self.InfoModel;
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else if (indexPath.row == 1){
+                LWIncomeDetailsVC *vc = [[LWIncomeDetailsVC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else if (indexPath.row == 2){
+                LWStoreWorkDetailsVC *vc = [[LWStoreWorkDetailsVC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else if (indexPath.row == 3){
+                LWMain2VC *vc =[[LWMain2VC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+        }else{
+            
+            if (indexPath.row == 0) {
+                LWStoreQRCodeVC *vc = [[LWStoreQRCodeVC alloc] init];
+                vc.InfoModel = self.InfoModel;
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else if (indexPath.row == 1){
+                LWStoreWorkDetailsVC *vc = [[LWStoreWorkDetailsVC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else if (indexPath.row == 2){
+                LPMainVC *vc =[[LPMainVC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }
         }
+        
     }else if (kAppDelegate.userMaterialModel.data.role.integerValue == 6){  //self.TitleArr = @[@"门店二维码",@"招聘企业"];
         if (indexPath.row == 0) {
             LWStoreQRCodeVC *vc = [[LWStoreQRCodeVC alloc] init];
@@ -156,9 +185,15 @@ static NSString *LPMineCellID = @"LWMyMineCell";
             vc.hidesBottomBarWhenPushed = YES;
             [self.navigationController pushViewController:vc animated:YES];
         }else if (indexPath.row == 1){
-            LPMainVC *vc =[[LPMainVC alloc] init];
-            vc.hidesBottomBarWhenPushed = YES;
-            [self.navigationController pushViewController:vc animated:YES];
+            if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+                LWMain2VC *vc =[[LWMain2VC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else{
+                LPMainVC *vc =[[LPMainVC alloc] init];
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            }
         }
 
     }
@@ -172,7 +207,6 @@ static NSString *LPMineCellID = @"LWMyMineCell";
     
     self.ApplyView.hidden = YES;
     self.StoreNumber.text = [NSString stringWithFormat:@"门店编号：%@",InfoModel.data.shopNum];
-    self.StoreTime.text = [NSString stringWithFormat:@"注册时间：%@",[NSString convertStringToYYYMMDD:InfoModel.data.time]];
     [self.SalesclerkCount setTitle:[NSString stringWithFormat:@"%ld人",(long)InfoModel.data.shopLabourNum.integerValue] forState:UIControlStateNormal];
     [self.ApplyCount setTitle:[NSString stringWithFormat:@"%ld人",(long)InfoModel.data.enrollNum.integerValue] forState:UIControlStateNormal];
     if (kAppDelegate.userMaterialModel.data.role.integerValue == 1 ||       //店主
@@ -180,15 +214,22 @@ static NSString *LPMineCellID = @"LWMyMineCell";
         [self.StoreCount setTitle:[NSString stringWithFormat:@"%ld人",(long)InfoModel.data.shopUserNum.integerValue] forState:UIControlStateNormal];
         [self.StoreCount setImage:nil forState:UIControlStateNormal];
         self.SalesclerkLabel.text = @"店员";
-        self.TitleArr = @[@"门店二维码",@"门店招工详情",@"招聘企业"];
+        if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+            self.TitleArr = @[@"门店二维码",@"门店收入明细",@"门店招工详情",@"招聘企业"];
+        }else{
+            self.TitleArr = @[@"门店二维码",@"门店招工详情",@"招聘企业"];
+        }
+//        self.TitleArr = @[@"门店二维码",@"门店招工详情",@"招聘企业"];
         self.StoreType.text = [NSString stringWithFormat:@"%@(店主)",[LPTools isNullToString:InfoModel.data.userName]];
-
+        self.StoreTime.text = [NSString stringWithFormat:@"注册时间：%@",[NSString convertStringToYYYMMDD:InfoModel.data.time]];
     }else if (kAppDelegate.userMaterialModel.data.role.integerValue == 6){      //店员
         [self.StoreCount setTitle:@"" forState:UIControlStateNormal];
         [self.StoreCount setImage:[UIImage imageNamed:@"manager"] forState:UIControlStateNormal];
         self.SalesclerkLabel.text = @"店主信息";
         self.TitleArr = @[@"门店二维码",@"招聘企业"];
         self.StoreType.text = [NSString stringWithFormat:@"%@(店员)",[LPTools isNullToString:InfoModel.data.userName]];
+        self.StoreTime.text = [NSString stringWithFormat:@"入店时间：%@",[NSString convertStringToYYYMMDD:InfoModel.data.time]];
+
     }
     [self.tableview reloadData];
 }
@@ -254,6 +295,8 @@ static NSString *LPMineCellID = @"LWMyMineCell";
         userImage.layer.cornerRadius = LENGTH_SIZE(30);
         [userImage yy_setImageWithURL:[NSURL URLWithString:self.InfoModel.data.userUrl] placeholder:[UIImage imageNamed:@"Head_image"]];
         userImage.clipsToBounds = YES;
+        userImage.contentMode = UIViewContentModeScaleAspectFill;
+        
         
         UIButton *delete = [[UIButton alloc] init];
         [view addSubview:delete];

@@ -28,7 +28,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"银行卡管理";
-    
+    [DSBaActivityView showActiviTy];
     [self requestSelectBindbankcard];
     
 }
@@ -78,10 +78,12 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
         [naviVCsArr addObject:vc];
         vc.hidesBottomBarWhenPushed = YES;
         
-        [self.navigationController  setViewControllers:naviVCsArr animated:YES];
+        [self.navigationController  setViewControllers:naviVCsArr animated:NO];
         
         
     }
+    [DSBaActivityView hideActiviTy];
+
 }
 
 

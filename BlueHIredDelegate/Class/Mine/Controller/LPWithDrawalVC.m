@@ -66,8 +66,6 @@
 }
 
 -(void)textFieldChanged:(UITextField *)textField{
-
-    
     if (textField.text.floatValue>self.model.data.chargeMoney.floatValue) {
             self.TitleTF.text = [NSString stringWithFormat:@"手续费%.2f元，实际到账%.2f元",self.model.data.chargeMoney.floatValue,
                                  textField.text.floatValue-self.model.data.chargeMoney.floatValue];
@@ -83,9 +81,6 @@
  
         _determineButton.enabled = YES;
     }
-    
-
-
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
@@ -148,8 +143,8 @@
     {
         [self.view showLoadingMeg:@"请输入金额" time:MESSAGE_SHOW_TIME];
         return;
-    }else if (_textField.text.floatValue < 20.0){
-        [LPTools AlertMessageView:@"提现金额最低20元！"];
+    }else if (_textField.text.floatValue < 15.0){
+        [LPTools AlertMessageView:@"提现金额最低15元！"];
         return;
     }else if ([_textField.text floatValue]>[_balance floatValue]){
         [self.view showLoadingMeg:@"提现金额超出可提余额" time:MESSAGE_SHOW_TIME];

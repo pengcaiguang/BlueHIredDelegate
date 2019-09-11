@@ -57,13 +57,13 @@ static NSString *LPMainCellID = @"LPMain2Cell";
 - (void)viewDidLoad {
     [super viewDidLoad];
  
-    [self.view addSubview:self.ButtonView];
-    [self.view addSubview:self.screenView];
-    
+//    [self.view addSubview:self.ButtonView];
+//    [self.view addSubview:self.screenView];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"F5F5F5"];
     [self.view addSubview:self.tableview];
     [self.tableview mas_makeConstraints:^(MASConstraintMaker *make) {
 //        make.edges.equalTo(self.view);
-        make.top.mas_offset(LENGTH_SIZE(80));
+        make.top.mas_offset(LENGTH_SIZE(10));
         make.left.right.bottom.mas_offset(0);
     
     }];
@@ -108,12 +108,13 @@ static NSString *LPMainCellID = @"LPMain2Cell";
 -(void)setSearchView{
     LPSearchBar *searchBar = [self addSearchBar];
     UIView *wrapView = [[UIView alloc]init];
-    wrapView.frame = CGRectMake(0, 0, SCREEN_WIDTH - 99, 32);
+    wrapView.frame = CGRectMake(0, 0, SCREEN_WIDTH, 32);
 //    wrapView.layer.cornerRadius = 16;
 //    wrapView.layer.masksToBounds = YES;
     wrapView.backgroundColor = [UIColor whiteColor];
     self.navigationItem.titleView = wrapView;
-
+//    wrapView.backgroundColor = [UIColor redColor];
+    
     searchBar.layer.cornerRadius = 16;
     searchBar.layer.masksToBounds = YES;
 
@@ -157,10 +158,9 @@ static NSString *LPMainCellID = @"LPMain2Cell";
         make.centerY.equalTo(wrapView);
         make.height.mas_offset(32);
     }];
-    
-    
-    
+
 }
+
 - (LPSearchBar *)addSearchBar{
     
     self.definesPresentationContext = YES;
@@ -192,6 +192,7 @@ static NSString *LPMainCellID = @"LPMain2Cell";
 -(BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar{
     LPMainSearchVC *vc = [[LPMainSearchVC alloc]init];
     vc.hidesBottomBarWhenPushed = YES;
+    vc.mechanismAddress = self.mechanismAddress;
     [self.navigationController pushViewController:vc animated:YES];
     
     return NO;
@@ -217,11 +218,13 @@ static NSString *LPMainCellID = @"LPMain2Cell";
             self.page += 1;
             [self.listArray addObjectsFromArray:self.model.data.workList];
             [self.tableview reloadData];
+            self.tableview.mj_footer.hidden = NO;
             if (self.model.data.workList.count < 20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
-
+//                self.tableview.mj_footer
+              
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
-
         }else{
             if (self.page == 1) {
                 [self.tableview reloadData];
@@ -431,6 +434,7 @@ static NSString *LPMainCellID = @"LPMain2Cell";
         }
     }];
 }
+
 -(void)requestMechanismlist{
     [NetApiManager requestMechanismlistWithParam:nil withHandle:^(BOOL isSuccess, id responseObject) {
         NSLog(@"%@",responseObject);

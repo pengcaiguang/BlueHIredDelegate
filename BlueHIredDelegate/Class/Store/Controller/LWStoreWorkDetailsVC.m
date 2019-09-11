@@ -36,7 +36,12 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
     
     [self setViewInit];
     self.page = 1;
-    [self requestQueryShopWorkDetail];
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        [self requestQueryShopWorkDetailV2];
+    }else{
+        [self requestQueryShopWorkDetail];
+    }
+    
     
 }
 
@@ -103,10 +108,10 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
             make.bottom.mas_offset(0);
         }
         make.left.right.mas_offset(0);
-        make.height.mas_offset(LENGTH_SIZE(49));
+        make.height.mas_offset(LENGTH_SIZE(0));
     }];
     BottomView.backgroundColor = [UIColor whiteColor];
-    
+    BottomView.clipsToBounds = YES;
     UILabel *CountTitle = [[UILabel alloc] init];
     [BottomView addSubview:CountTitle];
     [CountTitle mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -156,7 +161,12 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
     [self.DateBtn setTitleColor:[UIColor colorWithHexString:@"#333333"] forState:UIControlStateNormal];
     button.hidden = YES;
     self.page =1 ;
-    [self requestQueryShopWorkDetail];
+    
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        [self requestQueryShopWorkDetailV2];
+    }else{
+        [self requestQueryShopWorkDetail];
+    }
 }
 
 #pragma mark - TableViewDelegate & Datasource
@@ -197,11 +207,19 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
         
         _tableview.mj_header = [HZNormalHeader headerWithRefreshingBlock:^{
             self.page = 1;
-            [self requestQueryShopWorkDetail];
+            if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+                [self requestQueryShopWorkDetailV2];
+            }else{
+                [self requestQueryShopWorkDetail];
+            }
         }];
         
         _tableview.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
-            [self requestQueryShopWorkDetail];
+            if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+                [self requestQueryShopWorkDetailV2];
+            }else{
+                [self requestQueryShopWorkDetail];
+            }
         }];
         
     }
@@ -245,7 +263,11 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
                                                                                [sender setTitleColor:[UIColor baseColor] forState:UIControlStateNormal];
                                                                                [sender setTitle:str forState:UIControlStateNormal];
                                                                                self.DateStr = str;
-                                                                               self.page = 1;                                                     [self requestQueryShopWorkDetail];
+                                                                               self.page = 1;                                                         if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+                                                                                   [self requestQueryShopWorkDetailV2];
+                                                                               }else{
+                                                                                   [self requestQueryShopWorkDetail];
+                                                                               }
                                                                                self.CloseBtn.hidden = NO;
                                                                            }];
     
@@ -271,6 +293,7 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
             [self.tableview reloadData];
             if (model.data.shopWorkDetailList.count < 20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
         }else{
             if (self.page == 1) {
@@ -338,6 +361,29 @@ static NSString *LWStoreWorkDetailsCellID = @"LWStoreWorkDetailsCell";
         }
     }];
 }
+
+-(void)requestQueryShopWorkDetailV2{
+    
+    NSDictionary *dic = @{@"page":@(self.page),
+                          @"time":self.DateStr
+                          };
+    
+    [NetApiManager requestQueryShopWorkDetailV2:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        [self.tableview.mj_header endRefreshing];
+        [self.tableview.mj_footer endRefreshing];
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                self.model = [LWShopWorkDetailModel mj_objectWithKeyValues:responseObject];
+            }else{
+                [[UIApplication sharedApplication].keyWindow showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+}
+
 
 
 @end

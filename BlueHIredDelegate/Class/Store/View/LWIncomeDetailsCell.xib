@@ -26,7 +26,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uxa-I2-GGF">
-                        <rect key="frame" x="267.5" y="12" width="39.5" height="19.5"/>
+                        <rect key="frame" x="247.5" y="12" width="39.5" height="19.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <color key="textColor" red="0.23529411759999999" green="0.68627450980000004" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -38,22 +38,39 @@
                             <constraint firstAttribute="height" constant="1" id="jYH-E1-Oz7"/>
                         </constraints>
                     </view>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrows_in" translatesAutoresizingMaskIntoConstraints="NO" id="fYp-jA-l5F">
+                        <rect key="frame" x="295" y="16" width="12" height="12"/>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="（店主）" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZr-Pp-Hhc">
+                        <rect key="frame" x="52.5" y="12" width="66" height="20"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
                     <constraint firstItem="uxa-I2-GGF" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="CM8-ft-m5j"/>
                     <constraint firstItem="cTb-Bc-R58" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="13" id="ClD-MJ-KWB"/>
                     <constraint firstAttribute="bottom" secondItem="ZSu-wv-c6L" secondAttribute="bottom" id="IRX-tI-4Ma"/>
+                    <constraint firstItem="fYp-jA-l5F" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="Idn-tH-nbE"/>
                     <constraint firstItem="ZSu-wv-c6L" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="13" id="Ilj-iM-w4R"/>
                     <constraint firstAttribute="trailing" secondItem="ZSu-wv-c6L" secondAttribute="trailing" id="Odm-lq-8MW"/>
+                    <constraint firstAttribute="trailing" secondItem="fYp-jA-l5F" secondAttribute="trailing" constant="13" id="XDP-cz-hZO"/>
                     <constraint firstItem="cTb-Bc-R58" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="ZVa-fL-tXq"/>
-                    <constraint firstAttribute="trailing" secondItem="uxa-I2-GGF" secondAttribute="trailing" constant="13" id="k3b-Q7-UcF"/>
+                    <constraint firstItem="aZr-Pp-Hhc" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="aAp-wT-9Mf"/>
+                    <constraint firstItem="aZr-Pp-Hhc" firstAttribute="leading" secondItem="cTb-Bc-R58" secondAttribute="trailing" id="vwT-u2-jDX"/>
+                    <constraint firstItem="fYp-jA-l5F" firstAttribute="leading" secondItem="uxa-I2-GGF" secondAttribute="trailing" constant="8" id="xVe-Qh-Wxi"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
                 <outlet property="Money" destination="uxa-I2-GGF" id="AQw-V6-MCN"/>
                 <outlet property="Name" destination="cTb-Bc-R58" id="ctt-jD-Q9O"/>
+                <outlet property="UserType" destination="aZr-Pp-Hhc" id="pEu-rj-QL2"/>
             </connections>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="arrows_in" width="12" height="12"/>
+    </resources>
 </document>

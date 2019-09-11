@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 //Type == 0 密码修改。 type == 1 忘记密码
 @property (nonatomic,assign) NSInteger Type;
-
+@property (nonatomic,assign) NSString *UserPhone;
 @end
 
 NS_ASSUME_NONNULL_END

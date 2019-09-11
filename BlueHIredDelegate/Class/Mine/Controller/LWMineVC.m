@@ -38,6 +38,7 @@ static NSString *LPMineCellID = @"LWMyMineCell";
 @property (weak, nonatomic) IBOutlet UILabel *MoneyLabel;
 @property (weak, nonatomic) IBOutlet UIButton *Withdraw;
 @property (weak, nonatomic) IBOutlet UILabel *InfoNum;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *LayoutConstraint_top;
 
 @property (nonatomic,assign) BOOL OpenPhone;
 @property(nonatomic,strong) LPUserMaterialModel *userMaterialModel;
@@ -54,12 +55,21 @@ static NSString *LPMineCellID = @"LWMyMineCell";
     self.TitleArr = @[@"银行卡管理",@"账户管理",@"客服热线"];
     [self.view addSubview:self.tableview];
     self.tableview.clipsToBounds = YES;
+
+    if (@available(iOS 11.0, *)) {
+        self.LayoutConstraint_top.constant = LENGTH_SIZE(11);
+    } else {
+        // Fallback on earlier versions
+        self.LayoutConstraint_top.constant = kNavBarHeight-44+ LENGTH_SIZE(11);
+    }
+    
     [self.tableview mas_makeConstraints:^(MASConstraintMaker *make) {
         //        make.edges.equalTo(self.view);
         make.top.equalTo(self.CardView.mas_bottom).offset(0);
         make.left.mas_equalTo(0);
         make.right.mas_equalTo(0);
         make.bottom.mas_equalTo(0);
+        
     }];
     
     [LPTools setViewShapeLayer:self.Withdraw CornerRadii:12.5 byRoundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft ];
@@ -75,14 +85,16 @@ static NSString *LPMineCellID = @"LWMyMineCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:YES animated:NO];
+//    [self.navigationController setNavigationBarHidden:YES animated:NO];
+    self.navigationController.navigationBar.hidden = YES;
     self.userMaterialModel = kAppDelegate.userMaterialModel;
     [self requestQueryInfounreadNum];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    self.navigationController.navigationBar.hidden = NO;
+//    [self.navigationController setNavigationBarHidden:NO animated:NO];
  
 }
 
@@ -175,6 +187,36 @@ static NSString *LPMineCellID = @"LWMyMineCell";
 
 //门店申请
 - (IBAction)TouchStoreApply:(UIButton *)sender {
+    
+    if (kAppDelegate.userMaterialModel.data.isReal.integerValue == 0) {
+        [self.view showLoadingMeg:@"您还未实名认证,不能进行门店申请" time:MESSAGE_SHOW_TIME];
+        return;
+    }
+    
+    if (kAppDelegate.userMaterialModel.data.role.integerValue == 6) {
+        NSString *str1 = [NSString stringWithFormat:@"温馨提示\n\n店员不能进行门店申请！"];
+        NSMutableAttributedString *str = [[NSMutableAttributedString alloc]initWithString:str1];
+        [str addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:FontSize(17)] range:NSMakeRange(0,4)];
+        
+        GJAlertMessage *alert = [[GJAlertMessage alloc]
+                                 initWithTitle:str
+                                 message:nil
+                                 IsShowhead:YES
+                                 backDismiss:YES
+                                 textAlignment:NSTextAlignmentCenter
+                                 buttonTitles:@[@"确定"]
+                                 buttonsColor:@[[UIColor baseColor]]
+                                 buttonsBackgroundColors:@[[UIColor whiteColor]]
+                                 buttonClick:^(NSInteger buttonIndex) {
+                                     
+                                 }];
+        [alert show];
+        
+        return;
+    }
+   
+    
+    
     LWStoerApplyVC *vc = [[LWStoerApplyVC alloc] init];
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
@@ -183,8 +225,10 @@ static NSString *LPMineCellID = @"LWMyMineCell";
 //代理明细
 - (IBAction)TouchAgency:(UIButton *)sender {
     
-    NSMutableAttributedString *str = [[NSMutableAttributedString alloc]initWithString:@"此功能暂未开放"];
-    
+    NSString *str1 = [NSString stringWithFormat:@"温馨提示\n\n此功能暂未开放"];
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc]initWithString:str1];
+    [str addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:FontSize(17)] range:NSMakeRange(0,4)];
+
     GJAlertMessage *alert = [[GJAlertMessage alloc]
                              initWithTitle:str
                              message:nil

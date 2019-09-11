@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LWIncomeDetailsModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 //type=0 代理费明细。type = 1 个人业绩  type = 2 业绩详情
 @property (nonatomic,assign) NSInteger Type;
+@property (nonatomic,strong) NSString *currentDateString;
+
+@property (nonatomic,strong) LWIncomeDetailsDataModel *ListModel;
 
 @end
 

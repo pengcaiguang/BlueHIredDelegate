@@ -50,8 +50,11 @@
     
     self.AgeLabel.layer.cornerRadius = 2;
     self.AgeLabel.layer.borderColor = [UIColor baseColor].CGColor;
-    self.AgeLabel.layer.borderWidth = 1;
+    self.AgeLabel.layer.borderWidth = 0.5;
     self.AgeLabel.textColor = [UIColor baseColor];
+    
+    self.isHiddelabel.layer.borderColor = [UIColor colorWithHexString:@"#F8C988"].CGColor;
+    self.isHiddelabel.layer.borderWidth = 1;
     
     
 }
@@ -78,6 +81,19 @@
     self.mechanismScoreLabel.text = [NSString stringWithFormat:@"%.1f分",model.data.mechanismScore.floatValue];
     self.postNameLabel.text = model.data.postName;
 
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2 && (kAppDelegate.userMaterialModel.data.role.integerValue == 1 ||
+        kAppDelegate.userMaterialModel.data.role.integerValue == 1 )) {
+        
+        if ([model.data.postType integerValue] == 1) {
+            self.ManageMoney.text = [NSString stringWithFormat:@"管理费：%@元/时",reviseString(model.data.manageMoney)];
+        }else{
+            self.ManageMoney.text = [NSString stringWithFormat:@"管理费：%@元/月",reviseString(model.data.manageMoney)];
+        }
+    }else{
+        self.ManageMoney.text = @"";
+    }
+
+    
     if (model.data.age.length) {
         self.AgeLabel.text = [NSString stringWithFormat:@" %@ ", model.data.age];
         self.AgeLabel.hidden = NO;
@@ -85,25 +101,55 @@
         self.AgeLabel.hidden = YES;
     }
     
+    self.LayouConstraint_isHiddelabel_Height.constant = model.data.workHide.integerValue &&
+    kAppDelegate.userMaterialModel.data.shopType.integerValue == 2 ?
+    LENGTH_SIZE(36):0;
     
-    if (model.data.reMoney.integerValue>0) {
-        [self.reMoneyLabel setTitle:[NSString stringWithFormat:@"    %ld   ",
-                                     (long)model.data.reMoney.integerValue]
-                           forState:UIControlStateNormal];
-        CGFloat ReMoneyWidth = [LPTools widthForString:[NSString stringWithFormat:@"    %ld   ",
-                                                        (long)model.data.reMoney.integerValue] fontSize:FontSize(16) andHeight:LENGTH_SIZE(21)];
-        self.keyLabel_constraint_right.constant = LENGTH_SIZE(13.0 +10 ) +ReMoneyWidth;
-      
-        self.reMoneyLabel.hidden = NO;
-        self.reMoneyImage.hidden = NO;
-
+    if ([model.data.postType integerValue] == 1) {
+        if (model.data.addWorkMoney.floatValue>0.0 && model.data.reStatus.integerValue == 1 && model.data.reTime.integerValue>0) {
+            self.reMoneyImage.image = [UIImage imageNamed:@"reward"];
+            
+            NSString *str = [NSString stringWithFormat:@"     %.1f元/时  ",model.data.addWorkMoney.floatValue];
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:str];
+            [string addAttributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FontSize(12)]} range:[str rangeOfString:@"元/时"]];
+            [self.reMoneyLabel setAttributedTitle:string forState:UIControlStateNormal];
+            
+            CGFloat ReMoneyWidth = [LPTools widthForString:str fontSize:FontSize(13) andHeight:LENGTH_SIZE(21)];
+            self.keyLabel_constraint_right.constant = LENGTH_SIZE(13.0) + ReMoneyWidth + LENGTH_SIZE(10);
+            
+            self.reMoneyLabel.hidden = NO;
+            self.reMoneyImage.hidden = NO;
+            
+        }else{
+            self.reMoneyLabel.hidden = YES;
+            self.reMoneyImage.hidden = YES;
+            self.keyLabel_constraint_right.constant = LENGTH_SIZE(13);
+        }
     }else{
-        self.reMoneyLabel.hidden = YES;
-        self.reMoneyImage.hidden = YES;
-        self.keyLabel_constraint_right.constant = LENGTH_SIZE(13);
+        
+        if (model.data.reMoney.integerValue>0 && model.data.reStatus.integerValue == 1 && model.data.reTime.integerValue>0) {
+            self.reMoneyImage.image = [UIImage imageNamed:@"return"];
+            NSString *str = [NSString stringWithFormat:@"     %@元  ",model.data.reMoney];
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:str];
+            [string addAttributes:@{NSFontAttributeName: [UIFont boldSystemFontOfSize:FontSize(12)]} range:[str rangeOfString:@"元"]];
+            [self.reMoneyLabel setAttributedTitle:string forState:UIControlStateNormal];
+            
+            CGFloat ReMoneyWidth = [LPTools widthForString:str fontSize:FontSize(13) andHeight:LENGTH_SIZE(21)];
+            self.keyLabel_constraint_right.constant = LENGTH_SIZE(13.0) + ReMoneyWidth + LENGTH_SIZE(10);
+            
+            self.reMoneyLabel.hidden = NO;
+            self.reMoneyImage.hidden = NO;
+            
+        }else{
+            self.reMoneyLabel.hidden = YES;
+            self.reMoneyImage.hidden = YES;
+            self.keyLabel_constraint_right.constant = LENGTH_SIZE(13);
+        }
+
     }
     
-    if ([model.data.postName isEqualToString:@"小时工"]) {
+    
+    if ([model.data.postType integerValue] == 1) {
         self.wageRangeLabel.text = [NSString stringWithFormat:@"%@元/时",reviseString(model.data.workMoney)];
         [self.ReMoneyDeclare setTitle:@"奖励说明" forState:UIControlStateNormal];
     }else{
@@ -183,12 +229,21 @@
     
     
     NSString *strbackmoney = [self removeHTML2:model.data.reInstruction];
-    if (strbackmoney.length>0) {
+    if ((strbackmoney.length>0 &&
+         model.data.reTime.integerValue>0 &&
+         model.data.reMoney.integerValue>0 &&
+         model.data.reStatus.integerValue == 1 &&
+         [model.data.postType integerValue] == 0 )||
+        (strbackmoney.length>0 &&
+         model.data.reTime.integerValue>0 &&
+         model.data.addWorkMoney.floatValue>0.0 &&
+         model.data.reStatus.integerValue == 1&&
+         [model.data.postType integerValue] == 1)) {
         self.BackMoneylabel.text = strbackmoney;
         CGFloat BackMoneyHeight = [LPTools calculateRowHeight:strbackmoney fontSize:FontSize(14) Width:SCREEN_WIDTH - LENGTH_SIZE(26)];
-        self.LayouConstraint_BackView_Height.constant = LENGTH_SIZE(128 + 36 +20) + BackMoneyHeight + self.LayoutConstraint_KeyView.constant;
+        self.LayouConstraint_BackView_Height.constant = LENGTH_SIZE(128 + 36 +20) + BackMoneyHeight + self.LayoutConstraint_KeyView.constant+ self.LayouConstraint_isHiddelabel_Height.constant;
     }else{
-        self.LayouConstraint_BackView_Height.constant = LENGTH_SIZE(128) + self.LayoutConstraint_KeyView.constant;
+        self.LayouConstraint_BackView_Height.constant = LENGTH_SIZE(128) + self.LayoutConstraint_KeyView.constant+ self.LayouConstraint_isHiddelabel_Height.constant;
     }
     
     

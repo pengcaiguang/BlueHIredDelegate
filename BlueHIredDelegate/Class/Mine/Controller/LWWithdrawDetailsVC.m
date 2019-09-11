@@ -68,15 +68,21 @@
         self.Time3.text = [NSString convertStringToTime:[model.set_time stringValue]];
 
     }else if (model.status.integerValue == 4){
-        self.LineV.backgroundColor = [UIColor colorWithHexString:@"#E6E6E6"];
+        self.LineV.backgroundColor = [UIColor colorWithHexString:@"#FFCBCB"];
         self.OutView3.hidden = YES;
         self.InView3.backgroundColor = [UIColor colorWithHexString:@"#FF5353"];
-        self.Title3.text = [NSString stringWithFormat:@"提现失败   %@",[LPTools isNullToString:model.errorRemark]];
-        self.Title3.textColor = [UIColor colorWithHexString:@"#FF5353"];
-        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.Title3.text];
-        [string addAttributes:@{NSFontAttributeName: FONT_SIZE(12)} range:NSMakeRange(4, self.Title3.text.length-4)];
-        self.Title3.attributedText = string;
-        self.Time3.text = [NSString convertStringToTime:[model.set_time stringValue]];
+        if (model.errorRemark.length>0) {
+            self.Title3.text = [NSString stringWithFormat:@"提现失败（理由：%@）",[LPTools isNullToString:model.errorRemark]];
+            self.Title3.textColor = [UIColor colorWithHexString:@"#FF5353"];
+            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.Title3.text];
+            [string addAttributes:@{NSFontAttributeName: FONT_SIZE(14)} range:NSMakeRange(4, self.Title3.text.length-4)];
+            self.Title3.attributedText = string;
+            self.Time3.text = [NSString convertStringToTime:[model.set_time stringValue]];
+        }else{
+            self.Title3.text = @"提现失败";
+            self.Title3.textColor = [UIColor colorWithHexString:@"#FF5353"];
+        }
+
     }
     
 }

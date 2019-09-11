@@ -155,6 +155,7 @@ static NSString *LWShopAssistantCellID = @"LWShopAssistantCell";
             [self.tableview reloadData];
             if (self.model.data.count < 20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
         }else{
             if (self.page == 1) {
@@ -228,27 +229,49 @@ static NSString *LWShopAssistantCellID = @"LWShopAssistantCell";
 
 -(void)requestQuerydismissShopuser:(LWShopAssistantManageDataModel *) M{
     
-    
     NSDictionary *dic = @{@"id":M.id
                           };
-    [NetApiManager requestQuerydismissShopuser:dic withHandle:^(BOOL isSuccess, id responseObject) {
-        NSLog(@"%@",responseObject);
-        if (isSuccess) {
-            if ([responseObject[@"code"] integerValue] == 0  ) {
-                if ([responseObject[@"data"] integerValue] == 1) {
-                    [self.view showLoadingMeg:@"辞退成功" time:MESSAGE_SHOW_TIME];
-                    [self.listArray removeObject:M];
-                    [self.tableview reloadData];
+    
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        [NetApiManager requestQuerydismissShopuserV2:dic withHandle:^(BOOL isSuccess, id responseObject) {
+            NSLog(@"%@",responseObject);
+            if (isSuccess) {
+                if ([responseObject[@"code"] integerValue] == 0  ) {
+                    if ([responseObject[@"data"] integerValue] == 1) {
+                        [self.view showLoadingMeg:@"辞退成功" time:MESSAGE_SHOW_TIME];
+                        [self.listArray removeObject:M];
+                        [self.tableview reloadData];
+                    }else{
+                        [self.view showLoadingMeg:@"辞退失败,请稍后再试" time:MESSAGE_SHOW_TIME];
+                    }
                 }else{
-                    [self.view showLoadingMeg:@"辞退失败,请稍后再试" time:MESSAGE_SHOW_TIME];
+                    [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
                 }
             }else{
-                [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+                [self.view showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
             }
-        }else{
-            [self.view showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
-        }
-    }];
+        }];
+    }else{
+        [NetApiManager requestQuerydismissShopuser:dic withHandle:^(BOOL isSuccess, id responseObject) {
+            NSLog(@"%@",responseObject);
+            if (isSuccess) {
+                if ([responseObject[@"code"] integerValue] == 0  ) {
+                    if ([responseObject[@"data"] integerValue] == 1) {
+                        [self.view showLoadingMeg:@"辞退成功" time:MESSAGE_SHOW_TIME];
+                        [self.listArray removeObject:M];
+                        [self.tableview reloadData];
+                    }else{
+                        [self.view showLoadingMeg:@"辞退失败,请稍后再试" time:MESSAGE_SHOW_TIME];
+                    }
+                }else{
+                    [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+                }
+            }else{
+                [self.view showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+            }
+        }];
+    }
+    
 }
 
 

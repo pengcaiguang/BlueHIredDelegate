@@ -11,13 +11,22 @@
 #import "LPWorklistModel.h"
 #import "LPWorkDetailVC.h"
 #import "LPMain2Cell.h"
+#import "LPMainCell.h"
 #import "LWMyStaffModel.h"
 #import "LWMyStallCell.h"
+#import "LWMyStall2Cell.h"
+#import "LWMyStaffModelV2.h"
+#import "LWEntryRecordVC.h"
 
 static NSString *MainSearchHistory = @"MainSearchHistory";
 static NSString *MyStaffSearchHistory = @"MyStaffSearchHistory";
+static NSString *MainSearch2History = @"MainSearch2History";
+static NSString *MyStaffSearch2History = @"MyStaffSearch2History";
+
+static NSString *LPMain2CellID = @"LPMainCell";
 static NSString *LPMainCellID = @"LPMain2Cell";
 static NSString *LWMyStallCellID = @"LWMyStallCell";
+static NSString *LWMyStallCell2ID = @"LWMyStall2Cell";
 
 @interface LPMainSearchVC ()<UISearchBarDelegate,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 @property (nonatomic, strong)UITableView *tableview;
@@ -25,10 +34,14 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
 
 @property(nonatomic,assign) NSInteger page;
 @property(nonatomic,strong) LPWorklistModel *model;
+@property(nonatomic,strong) LPWorklistModel *model2;
 @property(nonatomic,strong) LWMyStaffModel *Mymodel;
+@property (nonatomic,strong) LWMyStaffModelV2 *MymodelV2;
 
 @property(nonatomic,strong) NSMutableArray <LPWorklistDataWorkListModel *>*listArray;
+@property(nonatomic,strong) NSMutableArray <LPWorklistDataWorkListModel *>*list2Array;
 @property(nonatomic,strong) NSMutableArray <LWMyStaffDataModel *>*MylistArray;
+@property (nonatomic,strong) NSMutableArray <LWMyStaffDataModelV2 *>*MylistArrayV2;
 
 @property(nonatomic,copy) NSArray *textArray;
 @property(nonatomic,copy) NSString *searchWord;
@@ -62,10 +75,16 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     [super viewWillAppear:animated];
     if (self.type == 1) {
         self.textArray = (NSArray *)kUserDefaultsValue(MyStaffSearchHistory);
+    }else if (self.type == 2){
+        self.textArray = (NSArray *)kUserDefaultsValue(MainSearch2History);
+    }else if (self.type == 3){
+        self.textArray = (NSArray *)kUserDefaultsValue(MyStaffSearch2History);
     }else{
         self.textArray = (NSArray *)kUserDefaultsValue(MainSearchHistory);
     }
     [self.tableview reloadData];
+    [self.Resulttableview reloadData];
+
 }
 
 -(void)setSearchView{
@@ -84,7 +103,11 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     searchBar.delegate = self;
     if (self.type == 1) {
         searchBar.placeholder = @"请输入关键字";
-    }else{
+    } else if (self.type == 2){
+        searchBar.placeholder = @"请输入企业名称或关键字";
+    } else if (self.type == 3){
+        searchBar.placeholder = @"请输入姓名或联系方式";
+    } else{
         searchBar.placeholder = @"请输入企业名称或关键字";
     }
     [searchBar setShowsCancelButton:NO];
@@ -113,7 +136,11 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         self.Resulttableview.hidden = YES;
         if (self.type == 1) {
             self.textArray = (NSArray *)kUserDefaultsValue(MyStaffSearchHistory);
-        }else{
+        } else if (self.type == 2){
+            self.textArray = (NSArray *)kUserDefaultsValue(MainSearch2History);
+        } else if (self.type == 3){
+            self.textArray = (NSArray *)kUserDefaultsValue(MyStaffSearch2History);
+        } else{
             self.textArray = (NSArray *)kUserDefaultsValue(MainSearchHistory);
         }
         [self.tableview reloadData];
@@ -153,7 +180,16 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     }
     else
     {
-        [self.view showLoadingMeg:@"请输入企业名称或关键字" time:MESSAGE_SHOW_TIME];
+        if (self.type == 1) {
+            [self.view showLoadingMeg:@"请输入关键字" time:MESSAGE_SHOW_TIME];
+        } else if (self.type == 2){
+            [self.view showLoadingMeg:@"请输入企业名称或关键字" time:MESSAGE_SHOW_TIME];
+        } else if (self.type == 3){
+            [self.view showLoadingMeg:@"请输入姓名或联系方式" time:MESSAGE_SHOW_TIME];
+        } else{
+            [self.view showLoadingMeg:@"请输入企业名称或关键字" time:MESSAGE_SHOW_TIME];
+        }
+
     }
 }
 
@@ -162,7 +198,11 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     if (![array containsObject:self.searchWord]) {
         [array insertObject:self.searchWord atIndex:0];
         if (self.type == 1) {
-            kUserDefaultsSave([array copy], MainSearchHistory);
+            kUserDefaultsSave([array copy], MyStaffSearchHistory);
+        }else if(self.type == 2){
+            kUserDefaultsSave([array copy], MainSearch2History);
+        }else if(self.type == 3){
+            kUserDefaultsSave([array copy], MyStaffSearch2History);
         }else{
             kUserDefaultsSave([array copy], MainSearchHistory);
         }
@@ -175,7 +215,11 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     self.page = 1;
     if (self.type == 1) {
         [self requestQueryGetStaffList];
-    }else{
+    }else if (self.type == 2){
+        [self request2];
+    }else if (self.type == 3){
+        [self requestQueryGetStaffListV2];
+    } else{
         [self request];
     }
  
@@ -184,6 +228,10 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
 -(void)clearHistory{
     if (self.type == 1) {
         kUserDefaultsRemove(MyStaffSearchHistory);
+    }else if (self.type == 2){
+        kUserDefaultsRemove(MainSearch2History);
+    }else if (self.type == 3){
+        kUserDefaultsRemove(MyStaffSearch2History);
     }else{
         kUserDefaultsRemove(MainSearchHistory);
     }
@@ -201,6 +249,10 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     }else{
         if (self.type == 1) {
             return self.MylistArray.count;
+        }else if (self.type == 2){
+            return self.list2Array.count;
+        }else if (self.type == 3){
+            return self.MylistArrayV2.count;
         }
         return self.listArray.count;
     }
@@ -234,7 +286,14 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
                 return LENGTH_SIZE(126) ;
             }
             return LENGTH_SIZE(66) ;
-        }else{
+        }else if (self.type == 2){
+            if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2 && (kAppDelegate.userMaterialModel.data.role.integerValue == 1 || kAppDelegate.userMaterialModel.data.role.integerValue == 1 )) {
+                return LENGTH_SIZE(111);
+            }
+            return LENGTH_SIZE(91);
+        }else if (self.type == 3){
+            return LENGTH_SIZE(126) ;
+        } else{
             LPWorklistDataWorkListModel *m = self.listArray[indexPath.row];
             if (m.key.length == 0) {
                 return LENGTH_SIZE(120) ;
@@ -307,7 +366,21 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             LWMyStallCell *cell = [tableView dequeueReusableCellWithIdentifier:LWMyStallCellID];
             cell.model = self.MylistArray[indexPath.row];
             return cell;
-        }else{
+        }else if (self.type == 2){
+            LPMainCell *cell = [tableView dequeueReusableCellWithIdentifier:LPMain2CellID];
+            if(cell == nil){
+                cell = [[LPMainCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:LPMain2CellID];
+            }
+            cell.model = self.list2Array[indexPath.row];
+            return cell;
+        } else if (self.type == 3){
+            LWMyStall2Cell *cell = [tableView dequeueReusableCellWithIdentifier:LWMyStallCell2ID];
+            if(cell == nil){
+                cell = [[LWMyStall2Cell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:LWMyStallCell2ID];
+            }
+            cell.model = self.MylistArrayV2[indexPath.row];
+            return cell;
+        } else{
             LPMain2Cell *cell = [tableView dequeueReusableCellWithIdentifier:LPMainCellID];
             if(cell == nil){
                 cell = [[LPMain2Cell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:LPMainCellID];
@@ -333,7 +406,16 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
                 self.MylistArray[indexPath.row].isShow = !self.MylistArray[indexPath.row].isShow;
                 [self.tableview reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             }
-        }else{
+        }else if (self.type == 2){
+            LPWorkDetailVC *vc = [[LPWorkDetailVC alloc]init];
+            vc.superViewArr = self.superViewArr;
+            vc.workListModel = self.list2Array[indexPath.row];
+            [self.navigationController pushViewController:vc animated:YES];
+        }else if (self.type == 3){
+            LWEntryRecordVC *vc = [[LWEntryRecordVC alloc] init];
+            vc.Listmodel = self.MylistArrayV2[indexPath.row];
+            [self.navigationController pushViewController:vc animated:YES];
+        } else{
             LPWorkDetailVC *vc = [[LPWorkDetailVC alloc]init];
             vc.workListModel = self.listArray[indexPath.row];
             [self.navigationController pushViewController:vc animated:YES];
@@ -370,10 +452,17 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         _Resulttableview.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
         [_Resulttableview registerNib:[UINib nibWithNibName:LPMainCellID bundle:nil] forCellReuseIdentifier:LPMainCellID];
         [_Resulttableview registerNib:[UINib nibWithNibName:LWMyStallCellID bundle:nil] forCellReuseIdentifier:LWMyStallCellID];
+        [_Resulttableview registerNib:[UINib nibWithNibName:LPMain2CellID bundle:nil] forCellReuseIdentifier:LPMain2CellID];
+        [_Resulttableview registerNib:[UINib nibWithNibName:LWMyStallCell2ID bundle:nil] forCellReuseIdentifier:LWMyStallCell2ID];
+
         _Resulttableview.mj_header = [HZNormalHeader headerWithRefreshingBlock:^{
             self.page = 1;
             if (self.type == 1) {
                 [self requestQueryGetStaffList];
+            }else if (self.type == 2){
+                [self request2];
+            } else if (self.type == 3){
+                [self requestQueryGetStaffListV2];
             }else{
                  [self request];
             }
@@ -382,6 +471,10 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         _Resulttableview.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
             if (self.type == 1) {
                 [self requestQueryGetStaffList];
+            }else if (self.type == 2){
+                [self request2];
+            }else if (self.type == 3){
+                [self requestQueryGetStaffListV2];
             }else{
                [self request];
             }
@@ -404,6 +497,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             [self.MylistArray addObjectsFromArray:self.Mymodel.data];
             [self.Resulttableview reloadData];
             if (Mymodel.data.count <20) {
+                self.tableview.mj_footer.hidden = self.MylistArray.count<20?YES:NO;
                 [self.Resulttableview.mj_footer endRefreshingWithNoMoreData];
             }
         }else{
@@ -438,6 +532,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             [self.Resulttableview reloadData];
             if (self.model.data.workList.count < 20) {
                 [self.Resulttableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
         }else{
             if (self.page == 1) {
@@ -447,6 +542,74 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             }
         }
         if (self.listArray.count == 0) {
+            [self addNodataViewHidden:NO];
+        }else{
+            [self addNodataViewHidden:YES];
+        }
+        
+    }else{
+        [self.view showLoadingMeg:NETE_ERROR_MESSAGE time:MESSAGE_SHOW_TIME];
+    }
+}
+
+- (void)setModel2:(LPWorklistModel *)model2{
+    _model2 = model2;
+    if ([self.model2.code integerValue] == 0) {
+        
+        if (self.page == 1) {
+            self.list2Array = [NSMutableArray array];
+        }
+        if (self.model2.data.workList.count > 0) {
+            self.page += 1;
+            [self.list2Array addObjectsFromArray:self.model2.data.workList];
+            [self.Resulttableview reloadData];
+            if (self.model2.data.workList.count < 20) {
+                [self.Resulttableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.list2Array.count<20?YES:NO;
+            }
+        }else{
+            if (self.page == 1) {
+                [self.Resulttableview reloadData];
+            }else{
+                [self.Resulttableview.mj_footer endRefreshingWithNoMoreData];
+            }
+        }
+        
+        if (self.list2Array.count == 0) {
+            [self addNodataViewHidden:NO];
+        }else{
+            [self addNodataViewHidden:YES];
+        }
+        
+    }else{
+        [self.view showLoadingMeg:NETE_ERROR_MESSAGE time:MESSAGE_SHOW_TIME];
+    }
+    
+}
+
+- (void)setMymodelV2:(LWMyStaffModelV2 *)MymodelV2{
+    _MymodelV2 = MymodelV2;
+    if ([self.MymodelV2.code integerValue] == 0) {
+        
+        if (self.page == 1) {
+            self.MylistArrayV2 = [NSMutableArray array];
+        }
+        if (self.MymodelV2.data.count > 0) {
+            self.page += 1;
+            [self.MylistArrayV2 addObjectsFromArray:self.MymodelV2.data];
+            [self.Resulttableview reloadData];
+            if (_MymodelV2.data.count <20) {
+                self.tableview.mj_footer.hidden = self.MylistArrayV2.count<20?YES:NO;
+                [self.Resulttableview.mj_footer endRefreshingWithNoMoreData];
+            }
+        }else{
+            if (self.page == 1) {
+                [self.Resulttableview reloadData];
+            }else{
+                [self.Resulttableview.mj_footer endRefreshingWithNoMoreData];
+            }
+        }
+        if (self.MylistArrayV2.count == 0) {
             [self addNodataViewHidden:NO];
         }else{
             [self addNodataViewHidden:YES];
@@ -516,6 +679,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
     NSDictionary *dic = @{
                           @"type":@(0),
                           @"mechanismName":self.searchWord,
+                          @"mechanismAddress":self.mechanismAddress ? self.mechanismAddress : @"china",
                           @"page":@(self.page)
                           };
     [NetApiManager requestWorklistWithParam:dic withHandle:^(BOOL isSuccess, id responseObject) {
@@ -533,6 +697,59 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         }
     }];
 }
+
+-(void)request2{
+    NSDictionary *dic ;
+    if (kAppDelegate.userMaterialModel.data.role.integerValue ==1 ||
+        kAppDelegate.userMaterialModel.data.role.integerValue ==2) {
+        dic = @{@"mechanismName":self.searchWord,
+                @"mechanismAddress":self.mechanismAddress ? self.mechanismAddress : @"china",
+                @"page":@(self.page),
+                @"type":@(2)
+                };
+    }else{
+        dic = @{@"mechanismName":self.searchWord,
+                @"mechanismAddress":self.mechanismAddress ? self.mechanismAddress : @"china",
+                @"page":@(self.page),
+                @"type":@(0)
+                };
+    }
+    [NetApiManager requestShopWorklistWithParam:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        [self.Resulttableview.mj_header endRefreshing];
+        [self.Resulttableview.mj_footer endRefreshing];
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                self.model2 = [LPWorklistModel mj_objectWithKeyValues:responseObject];
+            }else{
+                [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [self.view showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+}
+
+-(void)requestQueryGetStaffListV2{
+    NSDictionary *dic = @{@"key":self.searchWord,
+                          @"page":@(self.page)};
+    [NetApiManager requestQueryGetStaffListV2:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        [self.Resulttableview.mj_header endRefreshing];
+        [self.Resulttableview.mj_footer endRefreshing];
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                self.MymodelV2 = [LWMyStaffModelV2 mj_objectWithKeyValues:responseObject];
+            }else{
+                [[UIApplication sharedApplication].keyWindow showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+}
+
+
 
 //计算标签高度
 -(CGFloat)calculateKeyHeight:(NSString *) Key{

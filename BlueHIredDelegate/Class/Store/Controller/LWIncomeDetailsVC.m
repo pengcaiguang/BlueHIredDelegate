@@ -8,6 +8,9 @@
 
 #import "LWIncomeDetailsVC.h"
 #import "LWIncomeDetailsCell.h"
+#import "LWAgencyFeeVC.h"
+#import "LWIncomeDetailsModel.h"
+
 static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
 
 @interface LWIncomeDetailsVC ()<UITableViewDelegate,UITableViewDataSource>
@@ -17,6 +20,11 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
 
 @property (nonatomic,strong) UIButton *leftButton;
 @property (nonatomic,strong) UIButton *rightButton;
+@property (nonatomic,strong) UILabel *IncomeLabel;
+
+@property (nonatomic,strong) NSMutableArray <LWIncomeDetailsDataModel *>*listArray;
+@property (nonatomic,strong) LWIncomeDetailsModel *model;
+@property (nonatomic,assign) NSInteger page;
 
 @end
 
@@ -28,7 +36,8 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
     self.view.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
     self.currentDateString  = [DataTimeTool stringFromDate:[NSDate date] DateFormat:@"yyyy-MM"];
     [self setupUI];
-    
+    self.page = 1;
+    [self requestQueryGetPerformanceList];
 }
 
 
@@ -83,6 +92,7 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
     
     UILabel *Income = [[UILabel alloc] init];
     [self.view addSubview:Income];
+    self.IncomeLabel = Income;
     [Income mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(bgView.mas_bottom).offset(0);
         make.left.mas_offset(LENGTH_SIZE(13));
@@ -122,7 +132,8 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
     NSDate *StartDate = [calender dateByAddingComponents:comps toDate:date options:0];
     self.currentDateString = [dateFormatter stringFromDate:StartDate];
     [self.timeButton setTitle:self.currentDateString forState:UIControlStateNormal];
-        [self requestQuerySalarylist];
+    self.page = 1;
+    [self requestQueryGetPerformanceList];
 }
 
 -(void)TouchrightBt:(UIButton *)sender{
@@ -143,7 +154,8 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
     NSDate *StartDate = [calender dateByAddingComponents:comps toDate:date options:0];
     self.currentDateString = [dateFormatter stringFromDate:StartDate];
     [self.timeButton setTitle:self.currentDateString forState:UIControlStateNormal];
-        [self requestQuerySalarylist];
+    self.page = 1;
+    [self requestQueryGetPerformanceList];
 }
 
 -(void)chooseMonth{
@@ -168,7 +180,8 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
                                                                                NSLog(@"str = %@", str);
                                                                                [self.timeButton setTitle:str forState:UIControlStateNormal];
                                                                                self.currentDateString = self.timeButton.titleLabel.text;
-                                                                                                                                                              [self requestQuerySalarylist];
+                                                                               self.page = 1;
+                                                                               [self requestQueryGetPerformanceList];
                                                                            }];
     
     [datePickerView show];
@@ -180,18 +193,22 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
     return LENGTH_SIZE(50);
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 4;
+    return self.listArray.count;
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     LWIncomeDetailsCell *cell = [tableView dequeueReusableCellWithIdentifier:LWIncomeDetailsCellID];
+    cell.model = self.listArray[indexPath.row];
     return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
- 
+    LWAgencyFeeVC *vc = [[LWAgencyFeeVC alloc] init];
+    vc.Type = 2;
+    vc.ListModel = self.listArray[indexPath.row];
+    [self.navigationController pushViewController:vc animated:YES];
     
 }
 
@@ -208,12 +225,83 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
         _tableview.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
         _tableview.separatorColor = [UIColor colorWithHexString:@"#F5F5F5"];
         [_tableview registerNib:[UINib nibWithNibName:LWIncomeDetailsCellID bundle:nil] forCellReuseIdentifier:LWIncomeDetailsCellID];
+        _tableview.mj_header = [HZNormalHeader headerWithRefreshingBlock:^{
+            self.page = 1;
+            [self requestQueryGetPerformanceList];
+        }];
+        
+        _tableview.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+            [self requestQueryGetPerformanceList];
+        }];
     }
     return _tableview;
 }
 
+
+- (void)setModel:(LWIncomeDetailsModel *)model{
+    _model = model;
+    if ([model.code integerValue] == 0) {
+ 
+        self.IncomeLabel.text = [NSString stringWithFormat:@"总收入：%.2f元",model.data.allMoney.floatValue];
+        if (self.page == 1) {
+            self.listArray = [NSMutableArray array];
+        }
+        if (model.data.performanceList.count > 0) {
+            self.page += 1;
+            [self.listArray addObjectsFromArray:model.data.performanceList];
+            [self.tableview reloadData];
+            if (model.data.performanceList.count < 20) {
+                [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
+            }
+        }else{
+            if (self.page == 1) {
+                [self.tableview reloadData];
+            }else{
+                [self.tableview.mj_footer endRefreshingWithNoMoreData];
+            }
+        }
+        if (self.listArray.count == 0) {
+            self.tableview.mj_footer.alpha = 0;
+            [self addNodataViewHidden:NO];
+        }else{
+            self.tableview.mj_footer.alpha = 1;
+            [self addNodataViewHidden:YES];
+        }
+    }else{
+        [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_ERROR_MESSAGE time:MESSAGE_SHOW_TIME];
+    }
+}
+
+
+
+-(void)addNodataViewHidden:(BOOL)hidden {
+    BOOL has = NO;
+    LPNoDataView *noDataView ;
+    for (UIView *view in self.tableview.subviews) {
+        if ([view isKindOfClass:[LPNoDataView class]]) {
+            view.hidden = hidden;
+            noDataView = (LPNoDataView *)view;
+            has = YES;
+        }
+    }
+    if (!has) {
+        noDataView = [[LPNoDataView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, self.tableview.frame.size.height)];
+        [noDataView image:nil text:@"没有数据记录~"];
+        noDataView.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
+        
+        [self.tableview addSubview:noDataView];
+        noDataView.hidden = hidden;
+    }
+    
+}
+
+
+
+
+
 #pragma mark - request
--(void)requestQuerySalarylist{
+-(void)requestQueryGetPerformanceList{
     self.leftButton.enabled = YES;
     self.rightButton.enabled = YES;
     if ([self.currentDateString isEqualToString:[DataTimeTool stringFromDate:[NSDate date] DateFormat:@"yyyy-MM"]]) {
@@ -221,6 +309,27 @@ static NSString *LWIncomeDetailsCellID = @"LWIncomeDetailsCell";
     }else if ([self.currentDateString isEqualToString:@"2018-01"]){
         self.leftButton.enabled = NO;
     }
+    
+    NSDictionary *dic = @{@"page":@(self.page),
+                          @"time":self.currentDateString
+                          };
+    
+    [NetApiManager requestQueryGetPerformanceList:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        [self.tableview.mj_header endRefreshing];
+        [self.tableview.mj_footer endRefreshing];
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                self.model = [LWIncomeDetailsModel mj_objectWithKeyValues:responseObject];
+            }else{
+                [[UIApplication sharedApplication].keyWindow showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+    
+    
 }
 
 @end

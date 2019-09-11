@@ -287,8 +287,17 @@
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="注：预计到账时间为半个工作日，节假日顺延" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eOg-xa-rKL">
-                            <rect key="frame" x="25" y="227.5" width="246" height="15"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="注：" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eOg-xa-rKL">
+                            <rect key="frame" x="18" y="227.5" width="25" height="14.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                            <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
+                            </userDefinedRuntimeAttributes>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="预计2个小时内到账，具体到账时间请留意银行短信通知。" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t58-XM-AN4">
+                            <rect key="frame" x="48" y="227.5" width="309" height="29"/>
                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                             <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
@@ -299,6 +308,7 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstAttribute="trailing" secondItem="t58-XM-AN4" secondAttribute="trailing" constant="18" id="1oF-37-ZpN"/>
                         <constraint firstItem="Hjj-p5-h9A" firstAttribute="leading" secondItem="5M7-9l-iSC" secondAttribute="trailing" constant="20" id="2D4-5e-Gut">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
@@ -314,7 +324,7 @@
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </constraint>
-                        <constraint firstItem="eOg-xa-rKL" firstAttribute="leading" secondItem="e4p-48-SAd" secondAttribute="leading" constant="25" id="F5o-Gm-dVB">
+                        <constraint firstItem="eOg-xa-rKL" firstAttribute="leading" secondItem="e4p-48-SAd" secondAttribute="leading" constant="18" id="F5o-Gm-dVB">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
@@ -339,6 +349,7 @@
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </constraint>
+                        <constraint firstItem="t58-XM-AN4" firstAttribute="top" secondItem="eOg-xa-rKL" secondAttribute="top" id="L8f-8G-7d0"/>
                         <constraint firstAttribute="trailing" secondItem="KIA-eB-PN6" secondAttribute="trailing" constant="13" id="MtY-Ql-w5e"/>
                         <constraint firstItem="YFR-u8-IQS" firstAttribute="top" secondItem="mEG-tH-3EX" secondAttribute="bottom" id="Nx5-bs-6G5"/>
                         <constraint firstItem="PAa-Gp-fxm" firstAttribute="leading" secondItem="KIA-eB-PN6" secondAttribute="leading" id="TAQ-gE-Z13">
@@ -401,6 +412,7 @@
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </constraint>
+                        <constraint firstItem="t58-XM-AN4" firstAttribute="leading" secondItem="e4p-48-SAd" secondAttribute="leading" constant="48" id="wjd-Sy-0Aw"/>
                         <constraint firstItem="KIA-eB-PN6" firstAttribute="leading" secondItem="Hjj-p5-h9A" secondAttribute="leading" id="wss-dQ-z8w">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>

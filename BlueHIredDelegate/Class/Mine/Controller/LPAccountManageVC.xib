@@ -22,7 +22,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UUR-aV-qGz">
-                    <rect key="frame" x="0.0" y="20" width="375" height="48"/>
+                    <rect key="frame" x="0.0" y="30" width="375" height="48"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="手机号换绑" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9CB-VW-WlV">
                             <rect key="frame" x="13" y="14.5" width="82" height="19.5"/>
@@ -127,7 +127,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iTs-LR-ugj">
-                    <rect key="frame" x="0.0" y="68" width="375" height="48"/>
+                    <rect key="frame" x="0.0" y="78" width="375" height="48"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="登录密码修改" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wke-eO-8tC">
                             <rect key="frame" x="13" y="14.5" width="98" height="19.5"/>
@@ -232,7 +232,7 @@
                     </constraints>
                 </view>
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kF3-67-kjY">
-                    <rect key="frame" x="0.0" y="116" width="375" height="0.0"/>
+                    <rect key="frame" x="0.0" y="126" width="375" height="0.0"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="密保问题修改" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qiu-Ni-YM3">
                             <rect key="frame" x="22" y="-9.5" width="98" height="19.5"/>
@@ -315,7 +315,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qJX-Ec-J1f">
-                    <rect key="frame" x="0.0" y="116" width="375" height="48"/>
+                    <rect key="frame" x="0.0" y="126" width="375" height="48"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="微信绑定" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcM-4i-nbN">
                             <rect key="frame" x="13" y="14.5" width="65.5" height="19.5"/>
@@ -327,9 +327,9 @@
                             </userDefinedRuntimeAttributes>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="未绑定" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RA4-kT-Hmx">
-                            <rect key="frame" x="300" y="15.5" width="43" height="17"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <color key="textColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                            <rect key="frame" x="294" y="14.5" width="49" height="19.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                            <color key="textColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrows_in" translatesAutoresizingMaskIntoConstraints="NO" id="nuy-2j-9oM">
@@ -468,7 +468,7 @@
                         <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                     </userDefinedRuntimeAttributes>
                 </constraint>
-                <constraint firstItem="UUR-aV-qGz" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" id="GGN-GU-c5b">
+                <constraint firstItem="UUR-aV-qGz" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" constant="10" id="GGN-GU-c5b">
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                     </userDefinedRuntimeAttributes>

@@ -7,12 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LWIncomeDetailsModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LWIncomeDetailsCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *Name;
+@property (weak, nonatomic) IBOutlet UILabel *UserType;
 @property (weak, nonatomic) IBOutlet UILabel *Money;
+
+@property (nonatomic,strong) LWIncomeDetailsDataModel *model;
 
 @end
 

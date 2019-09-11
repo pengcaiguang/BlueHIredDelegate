@@ -39,6 +39,17 @@
         [self.navigationController pushViewController:vc animated:YES];
     }];
     
+    if (@available(iOS 11.0, *)) {
+        self.passwordTextField1.textContentType = UITextContentTypePassword;
+        self.passwordTextField2.textContentType = UITextContentTypePassword;
+    }
+    if (@available(iOS 12.0, *)) {
+        self.passwordTextField1.textContentType = UITextContentTypeNewPassword;
+        self.passwordTextField2.textContentType = UITextContentTypeNewPassword;
+    } else {
+        // Fallback on earlier versions
+    }
+    
 }
 
 - (IBAction)TouchLogin:(UIButton *)sender {

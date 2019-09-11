@@ -667,13 +667,18 @@ typedef void (^UploadImageTempBlock)(BOOL sussess,NSMutableArray *array);
 //首页列表
 + (void)requestWorklistWithParam:(id)paramer
                       withHandle:(response)responseHandle;
+//查询门店招聘列表
++ (void)requestShopWorklistWithParam:(id)paramer
+                          withHandle:(response)responseHandle;
 //查询所有行业/工种
 + (void)requestMechanismlistWithParam:(id)paramer
                            withHandle:(response)responseHandle;
 //招聘详情
 + (void)requestWorkDetailWithParam:(id)paramer
                         withHandle:(response)responseHandle;
-
+//招聘详情2
++ (void)requestWorkDetail2WithParam:(id)paramer
+                         withHandle:(response)responseHandle;
 //查看账单详情或提现进度
 + (void)requestWorkqueryWithDrawRecord:(id)paramer
                             withHandle:(response)responseHandle;
@@ -713,17 +718,40 @@ typedef void (^UploadImageTempBlock)(BOOL sussess,NSMutableArray *array);
 //门店招工详情
 + (void)requestQueryShopWorkDetail:(id)paramer
                         withHandle:(response)responseHandle;
+//门店招工详情V2
++ (void)requestQueryShopWorkDetailV2:(id)paramer
+                          withHandle:(response)responseHandle;
 //门店招工详情
 + (void)requestQueryGetShopUserList:(id)paramer
                          withHandle:(response)responseHandle;
 //辞退店员
 + (void)requestQuerydismissShopuser:(id)paramer
                          withHandle:(response)responseHandle;
-
+//辞退店员V2
++ (void)requestQuerydismissShopuserV2:(id)paramer
+                           withHandle:(response)responseHandle;
 //我的员工列表
 + (void)requestQueryGetStaffList:(id)paramer
                       withHandle:(response)responseHandle;
+//我的员工列表 模式2
++ (void)requestQueryGetStaffListV2:(id)paramer
+                        withHandle:(response)responseHandle;
+//我的员工入职记录
++ (void)requestQueryGetWorkOrderList:(id)paramer
+                          withHandle:(response)responseHandle;
+//我的员工添加备注
++ (void)requestQueryShopUpdateRemark:(id)paramer
+                          withHandle:(response)responseHandle;
 
+//门店收入明细
++ (void)requestQueryGetPerformanceList:(id)paramer
+                            withHandle:(response)responseHandle;
+//查询业绩详情
++ (void)requestQueryGetPerDetailList:(id)paramer
+                          withHandle:(response)responseHandle;
+//店主添加修改返费金额
++ (void)requestUpdateShopWork:(id)paramer
+                   withHandle:(response)responseHandle;
 @end
 
 

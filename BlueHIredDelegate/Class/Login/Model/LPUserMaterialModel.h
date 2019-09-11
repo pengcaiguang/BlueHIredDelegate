@@ -31,7 +31,7 @@
 @property (nonatomic, copy) NSString *servicePhone;
 @property (nonatomic, copy) NSString *isOpen;       //微信
 @property (nonatomic, copy) NSString *isBank;       //绑定
-@property (nonatomic, copy) NSString *shopType;       //绑定
+@property (nonatomic, copy) NSString *shopType;       //模式
 
 
 @end

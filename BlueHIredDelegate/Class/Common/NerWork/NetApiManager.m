@@ -2213,6 +2213,9 @@ static QNUploadManager *upManager = NULL;
     [NetRequestManager requestWithEnty:enty];
 }
 
+
+
+
 //查询绑定银行卡
 + (void)requestSelectBindbankcardWithParam:(id)paramer
                                 withHandle:(response)responseHandle{
@@ -2233,7 +2236,7 @@ static QNUploadManager *upManager = NULL;
                                                 withRequestEnty:RequestTypeGet
                                                       withParam:paramer
                                                      withHandle:responseHandle
-                                                 IsShowActiviTy:NO];
+                                                 IsShowActiviTy:YES];
     [NetRequestManager requestWithEnty:enty];
 }
 
@@ -2283,6 +2286,17 @@ static QNUploadManager *upManager = NULL;
                                                  IsShowActiviTy:NO];
     [NetRequestManager requestWithEnty:enty];
 }
+//查询门店招聘列表
++ (void)requestShopWorklistWithParam:(id)paramer
+                      withHandle:(response)responseHandle{
+    NSString * appendURLString = @"job/get_work_list";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:NO];
+    [NetRequestManager requestWithEnty:enty];
+}
 
 //查询所有行业/工种
 + (void)requestMechanismlistWithParam:(id)paramer
@@ -2299,6 +2313,17 @@ static QNUploadManager *upManager = NULL;
 + (void)requestWorkDetailWithParam:(id)paramer
                         withHandle:(response)responseHandle{
     NSString * appendURLString = @"job/query_work_detail";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:YES];
+    [NetRequestManager requestWithEnty:enty];
+}
+//招聘详情2
++ (void)requestWorkDetail2WithParam:(id)paramer
+                        withHandle:(response)responseHandle{
+    NSString * appendURLString = @"job/get_work_detail";
     NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
                                                 withRequestEnty:RequestTypeGet
                                                       withParam:paramer
@@ -2441,6 +2466,17 @@ static QNUploadManager *upManager = NULL;
                                                  IsShowActiviTy:NO];
     [NetRequestManager requestWithEnty:enty];
 }
+//门店招工详情V2
++ (void)requestQueryShopWorkDetailV2:(id)paramer
+                        withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/get_shop_detail_v2";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:NO];
+    [NetRequestManager requestWithEnty:enty];
+}
 
 //门店招工详情
 + (void)requestQueryGetShopUserList:(id)paramer
@@ -2466,6 +2502,20 @@ static QNUploadManager *upManager = NULL;
                                                  IsShowActiviTy:YES];
     [NetRequestManager requestWithEnty:enty];
 }
+
+//辞退店员V2
++ (void)requestQuerydismissShopuserV2:(id)paramer
+                         withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/dismiss_shop_user_v2";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:YES];
+    [NetRequestManager requestWithEnty:enty];
+}
+
+
 //我的员工列表
 + (void)requestQueryGetStaffList:(id)paramer
                          withHandle:(response)responseHandle{
@@ -2478,4 +2528,75 @@ static QNUploadManager *upManager = NULL;
     [NetRequestManager requestWithEnty:enty];
 }
 
+//我的员工列表 模式2
++ (void)requestQueryGetStaffListV2:(id)paramer
+                      withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/get_staff_list_v2";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:NO];
+    [NetRequestManager requestWithEnty:enty];
+}
+//我的员工入职记录
++ (void)requestQueryGetWorkOrderList:(id)paramer
+                        withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/get_work_order_list";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:NO];
+    [NetRequestManager requestWithEnty:enty];
+}
+
+//我的员工添加备注
++ (void)requestQueryShopUpdateRemark:(id)paramer
+                          withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/update_remark";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:YES];
+    [NetRequestManager requestWithEnty:enty];
+}
+
+
+//门店收入明细
++ (void)requestQueryGetPerformanceList:(id)paramer
+                      withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/get_performance_list";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:NO];
+    [NetRequestManager requestWithEnty:enty];
+}
+
+//查询业绩详情
++ (void)requestQueryGetPerDetailList:(id)paramer
+                            withHandle:(response)responseHandle{
+    NSString * appendURLString = @"shop/get_per_detail_list";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypeGet
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:NO];
+    [NetRequestManager requestWithEnty:enty];
+}
+
+//店主添加修改返费金额
++ (void)requestUpdateShopWork:(id)paramer
+                   withHandle:(response)responseHandle{
+    NSString * appendURLString = @"job/update_or_insert_shop_work";
+    NetRequestEnty * enty = [self createEntyWithAppendURLString:appendURLString
+                                                withRequestEnty:RequestTypePost
+                                                      withParam:paramer
+                                                     withHandle:responseHandle
+                                                 IsShowActiviTy:YES];
+    [NetRequestManager requestWithEnty:enty];
+}
 @end

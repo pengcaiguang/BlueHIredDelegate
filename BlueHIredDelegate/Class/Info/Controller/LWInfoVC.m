@@ -33,10 +33,11 @@ static NSString *LPInfoCellID = @"LPInfoCell";
     self.navigationItem.title = @"消息";
     self.listArray = [NSMutableArray array];
     self.selectArray = [NSMutableArray array];
-    
+    self.view.backgroundColor = [UIColor colorWithHexString:@"F5F5F5"];
     [self.view addSubview:self.tableview];
     [self.tableview mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.mas_offset(0);
+        make.top.mas_offset(LENGTH_SIZE(10));
+        make.left.right.mas_offset(0);
         if (@available(iOS 11.0, *)) {
             make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom).offset(0);
         } else {
@@ -159,6 +160,7 @@ static NSString *LPInfoCellID = @"LPInfoCell";
             [self.tableview reloadData];
             if (self.model.data.count < 20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
         }else{
             if (self.page == 1) {

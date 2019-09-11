@@ -24,18 +24,23 @@
 - (void)setModel:(LPBillrecordDataModel *)model{
     _model = model;
     self.TimeDate.text = [NSString convertStringToTime:[model.set_time stringValue]];
+    self.Money.textColor = [UIColor colorWithHexString:@"#FF5454"];
+    self.Status.textColor = [UIColor colorWithHexString:@"#999999"];
+    
     if (model.billType.integerValue == 2) {
-        self.Money.text = [NSString stringWithFormat:@"-%.2f元",model.money.floatValue];
-        self.Money.textColor = [UIColor colorWithHexString:@"#FF5454"];
+        self.Money.text = [NSString stringWithFormat:@"%.2f元",model.money.floatValue];
+//        self.Money.textColor = [UIColor colorWithHexString:@"#FF5454"];
+//        self.Status.textColor = [UIColor colorWithHexString:@"#999999"];
         self.InType.text = @"提现";
         if (model.status.integerValue == 1) {
-            self.Status.text = @"提现申请";
+            self.Status.text = @"处理中";
         }else if (model.status.integerValue == 2){
-            self.Status.text = @"银行接受处理";
+            self.Status.text = @"处理中";
         }else if (model.status.integerValue == 3){
-            self.Status.text = @"银行处理成功";
+            self.Status.text = @"到账成功";
         }else if (model.status.integerValue == 4){
-            self.Status.text = @"银行转账失败";
+            self.Status.text = @"到账失败";
+            self.Status.textColor = [UIColor colorWithHexString:@"#FF5454"];
         }
         
     }else{
@@ -49,7 +54,7 @@
             self.InType.text = @"代理费";
         }
         
-        self.Status.text = @"已到账";
+        self.Status.text = @"已到蓝聘账户";
 
         
     }

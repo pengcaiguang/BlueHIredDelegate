@@ -527,7 +527,7 @@ LPTools * LPTools_instance = nil ;
                                                                                 LENGTH_SIZE(View.bounds.size.width),
                                                                                 LENGTH_SIZE(View.bounds.size.height))
                                                    byRoundingCorners:corners
-                                                         cornerRadii:CGSizeMake(LENGTH_SIZE(Radius), 0.0)];
+                                                         cornerRadii:CGSizeMake(LENGTH_SIZE(Radius), LENGTH_SIZE(Radius))];
     CAShapeLayer *maskLayer = [CAShapeLayer layer];
     maskLayer.frame = CGRectMake(LENGTH_SIZE(View.bounds.origin.x),
                                  LENGTH_SIZE(View.bounds.origin.y),
@@ -535,6 +535,8 @@ LPTools * LPTools_instance = nil ;
                                  LENGTH_SIZE(View.bounds.size.height)) ;
     maskLayer.path = maskPath.CGPath;
     View.layer.mask = maskLayer;
+
+
 }
 
 

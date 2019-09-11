@@ -22,7 +22,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LqP-q5-ToY">
-                    <rect key="frame" x="0.0" y="30" width="375" height="347"/>
+                    <rect key="frame" x="0.0" y="30" width="375" height="330"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="cLO-H3-m7n">
                             <rect key="frame" x="150" y="57" width="75" height="75"/>
@@ -49,8 +49,8 @@
                             </userDefinedRuntimeAttributes>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vTw-TJ-Qkh">
-                            <rect key="frame" x="18" y="203" width="339" height="84"/>
-                            <string key="text">	广东蓝聘科技有限公司是一家专为蓝领打造招聘信息相关的综合服务平台，为广大职工朋友提供海量真实、可靠、优质的岗位。并设计资讯查看、互动社区、工时记录、工资查看等功能方便职工朋友的使用。保障劳动者的利益，让劳动者工作无忧。</string>
+                            <rect key="frame" x="18" y="203" width="339" height="67"/>
+                            <string key="text">	蓝聘代理版是广东蓝聘网络科技有限公司专为广大劳务代理做的一个可以管理员工、互利共赢的平台。代理可以实时记录自己所招员工的信息。代理管理流程更轻松、更规范。</string>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <color key="textColor" red="0.40000000000000002" green="0.40000000000000002" blue="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>

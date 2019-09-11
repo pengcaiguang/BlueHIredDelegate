@@ -141,11 +141,11 @@
 - (IBAction)touchCompleteButton:(id)sender {
  
     if (self.PassTF.text.length < 6) {
-        [self.view showLoadingMeg:@"请输入提现密码" time:MESSAGE_SHOW_TIME];
+        [self.view showLoadingMeg:@"请输入6位提现密码" time:MESSAGE_SHOW_TIME];
         return;
     }
     if (self.SurePassTF.text.length < 6) {
-        [self.view showLoadingMeg:@"请输入确认密码" time:MESSAGE_SHOW_TIME];
+        [self.view showLoadingMeg:@"请再次输入6位提现密码" time:MESSAGE_SHOW_TIME];
         return;
     }
     

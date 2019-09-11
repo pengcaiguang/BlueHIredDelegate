@@ -34,11 +34,17 @@
 
 @property (weak, nonatomic) IBOutlet UIView *BackView;
 @property (weak, nonatomic) IBOutlet UILabel *BackMoneylabel;
+@property (weak, nonatomic) IBOutlet UILabel *isHiddelabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *ManageMoney;
+
+
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *LayouConstraint_BackView_Height;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *LayouConstraint_lendTypeLabel_Width;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *LayouConstraint_lendTypeLabel_Bottom;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *LayouConstraint_AgeLabel_left;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *LayouConstraint_isHiddelabel_Height;
 
 @property (strong, nonatomic) IBOutlet UIView *mechanismScoreView;
 

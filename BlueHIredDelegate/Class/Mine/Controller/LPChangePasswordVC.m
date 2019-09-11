@@ -61,6 +61,8 @@
     phoneImg.textColor = [UIColor colorWithHexString:@"#333333"];
     phoneImg.font = FONT_SIZE(16);
     
+
+    
     UIView *PhoneImgLine = [[UIView alloc] init];
     [phoneBgView addSubview:PhoneImgLine];
     [PhoneImgLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -87,7 +89,13 @@
     self.phoneTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
     self.phoneTextField.keyboardType = self.Type == 1 ? UIKeyboardTypeNumberPad : UIKeyboardTypeDefault;
     self.phoneTextField.secureTextEntry = self.Type == 1 ? NO : YES;
-
+    
+    
+    
+    if (self.Type == 1  && self.UserPhone.length>0) {
+        self.phoneTextField.text = self.UserPhone;
+        self.phoneTextField.enabled = NO;
+    }
     
 //    self.phoneLineView = [[UIView alloc]init];
 //    [phoneBgView addSubview:self.phoneLineView];
@@ -226,11 +234,14 @@
         make.centerY.equalTo(passwordBgView);
     }];
     self.passwordTextField.delegate = self;
-    self.passwordTextField.placeholder = @"请输入新密码";
+    self.passwordTextField.placeholder = @"请设置6-16位密码";
     self.passwordTextField.tintColor = [UIColor baseColor];
     self.passwordTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
     self.passwordTextField.secureTextEntry = YES;
  
+    
+
+    
     
 //    UIButton *showPasswordButton = [[UIButton alloc]init];
 //    [passwordBgView addSubview:showPasswordButton];
@@ -334,6 +345,18 @@
 //        make.height.mas_equalTo(1);
 //    }];
 //    self.repasswordLineView.backgroundColor = [UIColor lightGrayColor];
+    
+    
+    if (@available(iOS 11.0, *)) {
+        self.passwordTextField.textContentType = UITextContentTypePassword;
+        self.repasswordTextField.textContentType = UITextContentTypePassword;
+    }
+    if (@available(iOS 12.0, *)) {
+        self.passwordTextField.textContentType = UITextContentTypeNewPassword;
+        self.repasswordTextField.textContentType = UITextContentTypeNewPassword;
+    } else {
+        // Fallback on earlier versions
+    }
     
     if (self.Type == 0) {
         UIButton *ForgetBtn = [[UIButton alloc] init];
@@ -535,8 +558,7 @@
             return;
         }
         
-        
-        [self requestSetPswWithParam];
+        [self requestMateCode];
     }else{
         if (self.phoneTextField.text.length < 6) {
             [self.view showLoadingMeg:@"请输入正确的旧密码" time:MESSAGE_SHOW_TIME];
@@ -561,6 +583,7 @@
 -(void)touchForgetButton{
     LPChangePasswordVC *vc = [[LPChangePasswordVC alloc] init];
     vc.Type = 1;
+    vc.UserPhone = kAppDelegate.userMaterialModel.data.userTel;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -642,6 +665,27 @@
         if (isSuccess) {
             if ([responseObject[@"code"] integerValue] == 0) {
  
+            }else{
+                [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [self.view showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+}
+
+-(void)requestMateCode{
+    NSDictionary *dic = @{
+                          @"i":@(1),
+                          @"phone":self.phoneTextField.text,
+                          @"code":self.verificationCodeTextField.text,
+                          @"token":self.token
+                          };
+    [NetApiManager requestMateCodeWithParam:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                [self requestSetPswWithParam];
             }else{
                 [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
             }

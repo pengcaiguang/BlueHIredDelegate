@@ -13,6 +13,7 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <BMKLocationkit/BMKLocationComponent.h>
+#import "LWWorkDetailEditVC.h"
 
 static NSString *LPWorkDetailHeadCellID = @"LPWorkDetailHeadCell";
 static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
@@ -42,6 +43,8 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
 
 @property (nonatomic,strong) UITextField *NameTextField;
 
+@property (nonatomic,strong) UILabel *ishidden;
+
 
 @end
 
@@ -51,22 +54,23 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
     [super viewDidLoad];
     // Do any additional setup after loading the view.
  
+    
+    
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.title = @"招聘详情";
-    self.navigationController.navigationBar.hidden = YES;
+//    self.navigationController.navigationBar.hidden = YES;
+
  
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
-    [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor clearColor], NSForegroundColorAttributeName, nil]];
+
 
     self.buttonArray = [NSMutableArray array];
     self.bottomButtonArray = [NSMutableArray array];
-    self.textArray = @[@"入职要求",@"薪资福利",@"住宿餐饮",@"工作时间",@"面试材料",@"其他说明"];
+    self.textArray = @[@"入职要求",@"薪资福利",@"食宿条件",@"工作时间",@"面试资料",@"其他说明"];
 
     [self.view addSubview:self.tableview];
     [self.tableview mas_makeConstraints:^(MASConstraintMaker *make) {
 //        make.edges.equalTo(self.view);
-        make.top.mas_equalTo(-kNavBarHeight+44);
+        make.top.mas_equalTo(-kNavBarHeight);
         make.left.mas_equalTo(0);
         make.right.mas_equalTo(0);
 //        make.bottom.mas_equalTo(-48);
@@ -76,29 +80,130 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
            make.bottom.mas_equalTo(LENGTH_SIZE(-48));
         }
     }];
-    [self setBottomView];
-    [self requestWorkDetail];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(textFiledEditChanged:)
-                                                name:UITextFieldTextDidChangeNotification object:self.NameTextField];
+    if ((kAppDelegate.userMaterialModel.data.role.integerValue == 1 ||
+        kAppDelegate.userMaterialModel.data.role.integerValue == 2) && kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+         [self setBottomView2];
+    }else{
+         [self setBottomView];
+    }
+    
+    UILabel *ishidden = [[UILabel alloc] init];
+    [self.view addSubview:ishidden];
+    self.ishidden = ishidden;
+    [ishidden mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.mas_offset(0);
+        make.height.mas_offset(LENGTH_SIZE(36));
+    }];
+    ishidden.backgroundColor = [UIColor colorWithHexString:@"#FFEDD4"];
+    ishidden.textColor = [UIColor colorWithHexString:@"#FFA82E"];
+    ishidden.layer.borderColor = [UIColor colorWithHexString:@"#F8C988"].CGColor;
+    ishidden.layer.borderWidth = 1;
+    ishidden.textAlignment = NSTextAlignmentCenter;
+    ishidden.font = FONT_SIZE(14);
+    ishidden.text = @"该职位已隐藏";
+    ishidden.hidden = YES;
+    
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        [self requestWork2Detail];
+    }else{
+        [self requestWorkDetail];
+    }
  
  
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-
- 
+//    self.navigationController.navigationBar.translucent = NO;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+    [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor clearColor], NSForegroundColorAttributeName, nil]];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.tableview reloadData];
+    });
+    
 }
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [self.navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setShadowImage:nil];
+}
+
+
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
     self.navigationController.navigationBar.hidden = NO;
- 
+    [self.NBackBT setTitleColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0] forState:UIControlStateNormal];
 
 }
 
--(void)setBottomView{
-    
 
+-(void)setBottomView2{
     
+    UIView *bottomBgView = [[UIView alloc]init];
+    [self.view addSubview:bottomBgView];
+    [bottomBgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(0);
+        make.right.mas_equalTo(LENGTH_SIZE(-142));
+        if (@available(iOS 11.0, *)) {
+            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        } else {
+            make.bottom.mas_equalTo(0);
+        }
+        make.height.mas_equalTo(LENGTH_SIZE(48));
+    }];
+    
+    self.signUpButton = [[UIButton alloc]init];
+    [self.view addSubview:self.signUpButton];
+    [self.signUpButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(0);
+        if (@available(iOS 11.0, *)) {
+            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        } else {
+            make.bottom.mas_equalTo(0);
+        }
+        make.height.mas_equalTo(LENGTH_SIZE(48));
+        make.width.mas_equalTo(LENGTH_SIZE(142));
+    }];
+    [self.signUpButton setTitle:@"设为隐藏" forState:UIControlStateNormal];
+    [self.signUpButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.signUpButton.backgroundColor = [UIColor baseColor];
+    self.signUpButton.titleLabel.font = [UIFont systemFontOfSize:FontSize(18)];
+    [self.signUpButton addTarget:self action:@selector(preventFlicker:) forControlEvents:UIControlEventTouchUpInside];
+ 
+    
+    NSArray *imgArray = @[@"service",@"share",@"edit"];
+    NSArray *titleArray = @[@"咨询",@"分享",@"编辑"];
+    for (int i =0; i<titleArray.count; i++) {
+        UIButton *button = [[UIButton alloc]init];
+        [bottomBgView addSubview:button];
+        [button setTitle:titleArray[i] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor colorWithHexString:@"#666666"] forState:UIControlStateNormal];
+        [button setImage:[UIImage imageNamed:imgArray[i]] forState:UIControlStateNormal];
+        
+        button.titleLabel.font = [UIFont systemFontOfSize:FontSize(11)];
+        button.tag = i;
+        button.layer.borderColor = [UIColor colorWithHexString:@"#E0E0E0"].CGColor;
+        button.layer.borderWidth = 0.5;
+        [button addTarget:self action:@selector(touchBottomButton:) forControlEvents:UIControlEventTouchUpInside];
+        [self.bottomButtonArray addObject:button];
+    }
+    [self.bottomButtonArray mas_distributeViewsAlongAxis:MASAxisTypeHorizontal withFixedSpacing:0 leadSpacing:0 tailSpacing:0];
+    [self.bottomButtonArray mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(0);
+        make.bottom.mas_equalTo(-0);
+    }];
+    
+    for (UIButton *button in self.bottomButtonArray) {
+        button.titleEdgeInsets = UIEdgeInsetsMake(0, -button.imageView.frame.size.width, -button.imageView.frame.size.height, 0);
+        button.imageEdgeInsets = UIEdgeInsetsMake(-button.titleLabel.intrinsicContentSize.height, 0, 0, -button.titleLabel.intrinsicContentSize.width);
+    }
+    
+}
+
+
+-(void)setBottomView{
+
     UIView *bottomBgView = [[UIView alloc]init];
     [self.view addSubview:bottomBgView];
     [bottomBgView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -114,7 +219,7 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
     }];
  
 
-    NSArray *titleArray = @[@"分享",@"咨询"];
+    NSArray *titleArray = @[@"咨询",@"分享"];
     for (int i =0; i<titleArray.count; i++) {
         UIButton *button = [[UIButton alloc]init];
         [bottomBgView addSubview:button];
@@ -137,78 +242,12 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
         make.bottom.mas_equalTo(-0);
     }];
     
-   
-    
-   
 }
 
-
-
-
-- (void)textFiledEditChanged:(id)notification{
-    
-    UITextRange *selectedRange = self.NameTextField.markedTextRange;
-    UITextPosition *position = [self.NameTextField positionFromPosition:selectedRange.start offset:0];
-    
-    if (!position) { //// 没有高亮选择的字
-        //过滤非汉字字符
-        self.NameTextField.text = [self filterCharactor:self.NameTextField.text withRegex:@"[^\u4e00-\u9fa5]"];
-        
-        if (self.NameTextField.text.length >= 5) {
-            self.NameTextField.text = [self.NameTextField.text substringToIndex:4];
-        }
-    }else { //有高亮文字
-        //do nothing
-    }
-}
-
--(void)textFieldChanged:(UITextField *)textField{
-    //
-    
-    /**
-     *  最大输入长度,中英文字符都按一个字符计算
-     */
-    int kMaxLength = 5;
-    NSString *toBeString = textField.text;
-    // 获取键盘输入模式
-    NSString *lang = [[UITextInputMode currentInputMode] primaryLanguage];
-    // 中文输入的时候,可能有markedText(高亮选择的文字),需要判断这种状态
-    // zh-Hans表示简体中文输入, 包括简体拼音，健体五笔，简体手写
-    textField.text = [self filterCharactor:textField.text withRegex:@"[^\u4e00-\u9fa5]"];
-
-    if ([lang isEqualToString:@"zh-Hans"]) {
-        UITextRange *selectedRange = [textField markedTextRange];
-        //获取高亮选择部分
-        UITextPosition *position = [textField positionFromPosition:selectedRange.start offset:0];
-        // 没有高亮选择的字，表明输入结束,则对已输入的文字进行字数统计和限制
-        if (!position) {
-            if (toBeString.length > kMaxLength) {
-                // 截取子串
-                textField.text = [toBeString substringToIndex:kMaxLength];
-            }
-        } else { // 有高亮选择的字符串，则暂不对文字进行统计和限制
-        }
-    } else {
-        // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
-        if (toBeString.length > kMaxLength) {
-            // 截取子串
-            textField.text = [toBeString substringToIndex:kMaxLength];
-        }
-    }
-}
-
-
-//根据正则，过滤特殊字符
-- (NSString *)filterCharactor:(NSString *)string withRegex:(NSString *)regexStr{
-    NSString *searchText = string;
-    NSError *error = NULL;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexStr options:NSRegularExpressionCaseInsensitive error:&error];
-    NSString *result = [regex stringByReplacingMatchesInString:searchText options:NSMatchingReportCompletion range:NSMakeRange(0, searchText.length) withTemplate:@""];
-    return result;
-}
+ 
 
 -(void)touchBottomButton:(UIButton *)button{
-    if (button.tag == 1) {
+    if (button.tag == 0) {
         NSLog(@"咨询");
         NSString *name = self.model.data.teacherName;
         NSString *number = self.model.data.teacherPhone;
@@ -307,23 +346,48 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
         
         return;
     }
-    else if (button.tag == 0)
+    else if (button.tag == 1)
     {
- 
+        
         NSString *url = @"";
-        if (AlreadyLogin) {
-            url = [NSString stringWithFormat:@"%@resident/#/recruitdetail?id=%@&identity=%@&origin=proxy",BaseRequestWeiXiURL,self.workListModel.id,kUserDefaultsValue(USERIDENTIY)];
+        if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+            url = [NSString stringWithFormat:@"%@resident/#/proxyworkdetail?workId=%@&identity=%@&origin=proxyV2&backIcon=1",
+                   BaseRequestWeiXiURL,self.workListModel.id,kUserDefaultsValue(USERIDENTIY)];
         }else{
-            url = [NSString stringWithFormat:@"%@resident/#/recruitdetail?id=%@&origin=proxy",BaseRequestWeiXiURL,self.workListModel.id];
+            url = [NSString stringWithFormat:@"%@resident/#/recruitdetail?id=%@&identity=%@&origin=proxy",
+                   BaseRequestWeiXiURL,self.workListModel.id,kUserDefaultsValue(USERIDENTIY)];
         }
-
-
         // http://192.168.0.152:8070/#/recruitdetail?id=29
         
         NSString *encodedUrl = [NSString stringWithString:[url stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         [LPTools ClickShare:encodedUrl Title:[NSString stringWithFormat:@"您的好友通过蓝聘平台给您推荐了%@，快来看看吧！",_model.data.mechanismName]];
         return;
 
+    }else if (button.tag == 2){
+        if ((self.model.data.reTime.integerValue>0 &&
+             self.model.data.maxReMoney.integerValue>0 &&
+             self.model.data.maxReStatus.integerValue == 1 &&
+             [self.model.data.postType integerValue] == 0 )||
+            (self.model.data.reTime.integerValue>0 &&
+             self.model.data.maxAddWorkMoney.floatValue>0.0 &&
+             self.model.data.maxReStatus.integerValue == 1&&
+             [self.model.data.postType integerValue] == 1)) {
+                LWWorkDetailEditVC *vc = [[LWWorkDetailEditVC alloc] init];
+                vc.superViewArr = self.superViewArr;
+                vc.workListModel = self.workListModel;
+                vc.model = self.model;
+                [self.navigationController pushViewController:vc animated:YES];
+            }else{
+                if ([self.model.data.postType integerValue] == 1) {
+                    [self.view showLoadingMeg:@"该企业暂无奖励工价，不能进行编辑" time:MESSAGE_SHOW_TIME];
+
+                }else{
+                    [self.view showLoadingMeg:@"该企业暂无返费，不能进行编辑" time:MESSAGE_SHOW_TIME];
+
+                }
+            }
+        
+        return;
     }
     
     
@@ -347,32 +411,25 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
         sender.enabled = YES;
     });
 }
-
+#pragma mark - 设为隐藏
 - (void)preventFlicker:(UIButton *)button {
-    button.highlighted = NO;
+    [self requestUpdateShopWork];
 }
 
 
 #pragma mark - setdata
 -(void)setModel:(LPWorkDetailModel *)model{
     _model = model;
-    
-//    if (kUserDefaultsValue(USERDATA).integerValue == 4 ||
-//        kUserDefaultsValue(USERDATA).integerValue >= 8) {
-//        [self.signUpButton setTitle:@"禁止报名" forState:UIControlStateNormal];
-//        self.signUpButton.backgroundColor = [UIColor colorWithHexString:@"#939393"];
-//        self.signUpButton.enabled = NO;
-//    }
-    
-    if ([model.data.status integerValue] == 1) {// "status": 1,//0正在招工1已经招满
-        [self.signUpButton setTitle:@"入职报名" forState:UIControlStateNormal];
-        self.signUpButton.backgroundColor = [UIColor colorWithHexString:@"#CCCCCC"];
-        self.signUpButton.enabled = NO;
+
+    if ([model.data.workHide integerValue] == 1) {
+        [self.signUpButton setTitle:@"取消隐藏" forState:UIControlStateNormal];
+    }else{
+        [self.signUpButton setTitle:@"设为隐藏" forState:UIControlStateNormal];
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableview reloadData];
-    });
+//    });
     
 }
 
@@ -396,6 +453,13 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
     [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
     [self.navigationController.navigationBar setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor colorWithRed:0 green:0 blue:0 alpha:alpha], NSForegroundColorAttributeName, nil]];
     [self.NBackBT setTitleColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:alpha] forState:UIControlStateNormal];
+    
+    if (scrollView.contentOffset.y+kNavBarHeight>LENGTH_SIZE(280)
+        && self.model.data.workHide.integerValue && kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        self.ishidden.hidden =   NO ;
+    }else{
+        self.ishidden.hidden =   YES ;
+    }
 
 }
 
@@ -464,12 +528,24 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
 //        if (self.model.data.key.length == 0 && ![self.model.data.lendType integerValue]) {
 //            KeyHeight = 0;
 //        }
+        CGFloat workHideHeight = self.model.data.workHide.integerValue &&
+        kAppDelegate.userMaterialModel.data.shopType.integerValue == 2?
+        LENGTH_SIZE(36):0;
         
-        if (strbackmoney.length>0) {
+        if ((strbackmoney.length>0 &&
+             self.model.data.reTime.integerValue>0 &&
+             self.model.data.reMoney.integerValue>0 &&
+             self.model.data.reStatus.integerValue == 1 &&
+             [self.model.data.postType integerValue] == 0 )||
+            (strbackmoney.length>0 &&
+             self.model.data.reTime.integerValue>0 &&
+             self.model.data.addWorkMoney.floatValue>0.0 &&
+             self.model.data.reStatus.integerValue == 1&&
+             [self.model.data.postType integerValue] == 1)) {
             CGFloat BackMoneyHeight = [LPTools calculateRowHeight:strbackmoney fontSize:FontSize(14) Width:SCREEN_WIDTH - LENGTH_SIZE(26)];
-             return LENGTH_SIZE(280 + 128 + 36 + 20)  + BackMoneyHeight + KeyHeight;
+             return LENGTH_SIZE(280 + 128 + 36 + 20)  + BackMoneyHeight + KeyHeight + workHideHeight;
         }else{
-            return LENGTH_SIZE(280 + 128 ) + KeyHeight;
+            return LENGTH_SIZE(280 + 128 ) + KeyHeight + workHideHeight;
         }
     }else if (indexPath.section == 1){
             if (indexPath.row == 0) {
@@ -579,23 +655,7 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section== 3) {
-        LPWorkDetailVC *vc = [[LPWorkDetailVC alloc]init];
-        vc.hidesBottomBarWhenPushed = YES;
-        vc.workListModel = self.RecommendList[indexPath.row];
-        NSMutableArray *naviVCsArr = [[NSMutableArray alloc]initWithArray:self.navigationController.viewControllers];
-        for (UIViewController *vc in naviVCsArr) {
-            if ([vc isKindOfClass:[self class]]) {
-                [naviVCsArr removeObject:vc];
-                break;
-            }
-        }
-        [naviVCsArr addObject:vc];
-        vc.hidesBottomBarWhenPushed = YES;
-        
-        [self.navigationController  setViewControllers:naviVCsArr animated:YES];
- 
-    }else if (indexPath.section == 2 && indexPath.row == 2){
+    if (indexPath.section == 2 && indexPath.row == 2){
         NSDecimalNumber *XNumber = [NSDecimalNumber decimalNumberWithString:self.model.data.x];
         NSDecimalNumber *YNumber = [NSDecimalNumber decimalNumberWithString:self.model.data.y];
         
@@ -626,34 +686,84 @@ static NSString *LPWorkDetailTextCellID = @"LPWorkDetailTextCell";
         }
     }];
 }
--(void)requestSetCollection{
+
+
+
+-(void)requestWork2Detail{
     NSDictionary *dic = @{
-                          @"type":@(1),
-                          @"id":self.workListModel.id
+                          @"workId":self.workListModel.id
                           };
-    [NetApiManager requestSetCollectionWithParam:dic withHandle:^(BOOL isSuccess, id responseObject) {
+    [NetApiManager requestWorkDetail2WithParam:dic withHandle:^(BOOL isSuccess, id responseObject) {
         NSLog(@"%@",responseObject);
         if (isSuccess) {
             if ([responseObject[@"code"] integerValue] == 0) {
-                if (!ISNIL(responseObject[@"data"])) {
-                    if ([responseObject[@"data"] integerValue] == 0) {
-                        self.bottomButtonArray[0].selected = YES;
-                        [LPTools AlertCollectView:@""];
-                    }else if ([responseObject[@"data"] integerValue] == 1) {
-                        self.bottomButtonArray[0].selected = NO;
-                        if (self.CollectionBlock) {
-                            self.CollectionBlock();
-                        }
-                    }
-                }
+                self.model = [LPWorkDetailModel mj_objectWithKeyValues:responseObject];
             }else{
                 [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
             }
         }else{
             [self.view showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
         }
-    } IsShowActivity:YES];
+    }];
 }
+
+ 
+
+- (void)requestUpdateShopWork{
+    
+    NSDictionary *dic = @{
+                          @"workId":self.model.data.id,
+                          @"workHide":self.model.data.workHide.integerValue?@"0":@"1",
+                          };
+
+    [NetApiManager requestUpdateShopWork:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                if ([responseObject[@"data"] integerValue] == 1) {
+                    if (self.superViewArr.count>=2) {
+                        LWMainView *V1 = self.superViewArr[0];
+                        LWMainView *V2 = self.superViewArr[1];
+                        if (self.model.data.workHide.integerValue == 1) {
+                            for (LPWorklistDataWorkListModel *m in V2.listArray) {
+                                if (m.id.integerValue == self.workListModel.id.integerValue) {
+                                    [V2.listArray removeObject:m];
+                                    break;
+                                }
+                            }
+                            [V1.listArray insertObject:self.workListModel atIndex:0];
+                        }else{
+                            for (LPWorklistDataWorkListModel *m in V1.listArray) {
+                                if (m.id.integerValue == self.workListModel.id.integerValue) {
+                                    [V1.listArray removeObject:m];
+                                    break;
+                                }
+                            }
+                            [V2.listArray insertObject:self.workListModel atIndex:0];
+                        }
+                        [V1 NodataView];
+                        [V2 NodataView];
+                        [V1.tableview reloadData];
+                        [V2.tableview reloadData];
+                    }
+                    
+                    self.model.data.workHide = self.model.data.workHide.integerValue?@"0":@"1";
+                    self.workListModel.workHide = self.model.data.workHide;
+                    [self setModel:self.model];
+                    [self.view showLoadingMeg:@"修改成功" time:MESSAGE_SHOW_TIME];
+                }else{
+                    [self.view showLoadingMeg:@"修改失败,请稍后再试" time:MESSAGE_SHOW_TIME];
+                }
+            }else{
+                [[UIApplication sharedApplication].keyWindow showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+}
+
+
 
 #pragma mark lazy
 - (UITableView *)tableview{

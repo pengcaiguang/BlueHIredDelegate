@@ -29,7 +29,11 @@
     self.WorkDetailsAdd.delegate = self;
     self.remark.delegate = self;
     self.WorkAddress.delegate = self;
-    
+    self.WorkDetailsAdd.textContainer.lineFragmentPadding = 0.0;
+    self.WorkDetailsAdd.textContainerInset = UIEdgeInsetsMake(LENGTH_SIZE(7), CGFLOAT_MIN, 0, 0);
+    self.WorkDetailsAdd.placeholderTextColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    self.remark.placeholderTextColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+
 }
 
 - (IBAction)touchSave:(id)sender {
@@ -62,6 +66,8 @@
     static int kMaxLength = 150;
     if (self.WorkDetailsAdd == textField) {
         kMaxLength = 30;
+    }else{
+        kMaxLength = 150;
     }
     
     NSString *toBeString = textField.text;

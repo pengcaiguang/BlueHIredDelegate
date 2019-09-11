@@ -47,9 +47,13 @@
     self.headImageView.layer.cornerRadius = 4;
 
  
+    NSString *strutl = @"";
     
-    NSString *strutl = [NSString stringWithFormat:@"%@login?identity=%@&origin=proxy",BaseRequestWeiXiURLTWO,user.data.identity];
-    //    NSString *strutl = [NSString stringWithFormat:@"http://192.168.0.152:8090/login?identity=%@",st];
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        strutl = [NSString stringWithFormat:@"%@resident/#/proxywork?identity=%@&origin=proxyV2",BaseRequestWeiXiURL,user.data.identity];
+    }else{
+        strutl = [NSString stringWithFormat:@"%@login?identity=%@&origin=proxy",BaseRequestWeiXiURLTWO,user.data.identity];
+    }
     
     //1. 实例化二维码滤镜
     CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
@@ -146,7 +150,13 @@
  
     LPUserMaterialModel *user = kAppDelegate.userMaterialModel;
 
-    NSString *url = [NSString stringWithFormat:@"%@login?identity=%@&origin=proxy",BaseRequestWeiXiURLTWO,user.data.identity];
+    NSString *url = @"";
+    
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        url = [NSString stringWithFormat:@"%@resident/#/proxywork?identity=%@&origin=proxyV2",BaseRequestWeiXiURL,user.data.identity];
+    }else{
+        url = [NSString stringWithFormat:@"%@login?identity=%@&origin=proxy",BaseRequestWeiXiURLTWO,user.data.identity];
+    }
     
     NSString *encodedUrl = [NSString stringWithString:[url stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     

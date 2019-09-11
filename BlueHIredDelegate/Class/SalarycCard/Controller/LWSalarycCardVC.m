@@ -67,7 +67,19 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     [super viewDidLoad];
     self.navigationItem.title = @"银行卡绑定";
     
-    self.TypeArray = @[@"招商银行",@"兴业银行",@"中国建设银行"];
+    self.TypeArray = @[@"招商银行",
+                       @"兴业银行",
+                       @"中国建设银行",
+                       @"中国工商银行",
+                       @"中国农业银行",
+                       @"中国银行",
+                       @"交通银行",
+                       @"中国邮政储蓄银行",
+                       @"光大银行",
+                       @"广发银行",
+                       @"平安银行",
+                       @"华夏银行",
+                       @"浙商银行"];
     [self.view addSubview:self.pickerView];
 
     [LPTools setViewShapeLayer:self.RealLabel
@@ -139,7 +151,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
             self.NameLabel.text = @"提现密码";
             self.CardLabel.text = @"确认密码";
             self.NameTF.placeholder = @"请设置6位提现密码";
-            self.CardTF.placeholder = @"请再次输入提现密码";
+            self.CardTF.placeholder = @"请再次输入6位提现密码";
             self.NameTF.text = @"";
             self.CardTF.text = @"";
             
@@ -268,11 +280,11 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
             self.model.data.openBankAddr = self.addressTF.text;
         }else if (self.IntStep == 2){
             if (self.NameTF.text.length < 6) {
-                [self.view showLoadingMeg:@"请输入提现密码" time:MESSAGE_SHOW_TIME];
+                [self.view showLoadingMeg:@"请输入6位提现密码" time:MESSAGE_SHOW_TIME];
                 return;
             }
             if (self.CardTF.text.length < 6) {
-                [self.view showLoadingMeg:@"请输入确认密码" time:MESSAGE_SHOW_TIME];
+                [self.view showLoadingMeg:@"请再次输入6位提现密码" time:MESSAGE_SHOW_TIME];
                 return;
             }
             if (![self.NameTF.text isEqualToString:self.CardTF.text]) {
@@ -817,8 +829,28 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
                                     weakSelf.model.data.bankName = @"招商银行";
                                 }else if ([name containsString:@"兴业"]){
                                     weakSelf.model.data.bankName = @"兴业银行";
+                                }else if ([name containsString:@"工商"]){
+                                    weakSelf.model.data.bankName = @"中国工商银行";
+                                }else if ([name containsString:@"农业"]){
+                                    weakSelf.model.data.bankName = @"中国农业银行";
+                                }else if ([name containsString:@"中国银行"]){
+                                    weakSelf.model.data.bankName = @"中国银行";
+                                }else if ([name containsString:@"交通"]){
+                                    weakSelf.model.data.bankName = @"交通银行";
+                                }else if ([name containsString:@"邮储"]){
+                                    weakSelf.model.data.bankName = @"中国邮政储蓄银行";
+                                }else if ([name containsString:@"光大"]){
+                                    weakSelf.model.data.bankName = @"光大银行";
+                                }else if ([name containsString:@"广发"]){
+                                    weakSelf.model.data.bankName = @"广发银行";
+                                }else if ([name containsString:@"平安"]){
+                                    weakSelf.model.data.bankName = @"平安银行";
+                                }else if ([name containsString:@"华夏"]){
+                                    weakSelf.model.data.bankName = @"华夏银行";
+                                }else if ([name containsString:@"浙商"]){
+                                    weakSelf.model.data.bankName = @"浙商银行";
                                 }else{
-                                    GJAlertMessage *alert = [[GJAlertMessage alloc] initWithTitle:@"本平台工资卡绑定仅支持中国建设银行、招商银行或者兴业银行的银行卡，若没有此三种银行卡，请联系驻厂老师或者客服人员为您办理。"
+                                    GJAlertMessage *alert = [[GJAlertMessage alloc] initWithTitle:@"本平台工资卡绑定不支持该银行的银行卡！"
                                                                                           message:nil
                                                                                     textAlignment:NSTextAlignmentCenter
                                                                                      buttonTitles:@[@"确定"]

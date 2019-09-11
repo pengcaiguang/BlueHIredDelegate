@@ -64,5 +64,6 @@
 #import "UILabel+LXLabel.h"
 #import "UIView+LX_Frame.h"
 #import "UIView+FTCornerdious.h"
+#import "DSBaActivityView.h"
 
 #endif /* Header_h */

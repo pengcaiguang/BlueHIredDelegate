@@ -136,10 +136,12 @@ static NSString *LWBatchAddWorkCellID = @"LWBatchAddWorkCell";
     [self.tableview reloadData];
     if (self.ListArray.count>0) {
         [self.allBtn setTitle:[NSString stringWithFormat:@"录入完成(%lu)",(unsigned long)self.ListArray.count] forState:UIControlStateNormal];
-        self.allBtn.backgroundColor = [UIColor colorWithHexString:@"#3C93FF"];
+        [self.allBtn setTitleColor:[UIColor colorWithHexString:@"#666666"] forState:UIControlStateNormal];
+        self.allBtn.backgroundColor = [UIColor whiteColor];
 
     }else{
         [self.allBtn setTitle:@"录入完成" forState:UIControlStateNormal];
+        [self.allBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         self.allBtn.backgroundColor = [UIColor colorWithHexString:@"#CCCCCC"];
     }
     [self.alertView close];
@@ -212,9 +214,11 @@ static NSString *LWBatchAddWorkCellID = @"LWBatchAddWorkCell";
         [weakSelf.tableview reloadData];
         if (weakSelf.ListArray.count>0) {
             [weakSelf.allBtn setTitle:[NSString stringWithFormat:@"录入完成(%lu)",(unsigned long)weakSelf.ListArray.count] forState:UIControlStateNormal];
-            weakSelf.allBtn.backgroundColor = [UIColor colorWithHexString:@"#3C93FF"];
+            [weakSelf.allBtn setTitleColor:[UIColor colorWithHexString:@"#666666"] forState:UIControlStateNormal];
+            weakSelf.allBtn.backgroundColor = [UIColor whiteColor];
         }else{
             weakSelf.allBtn.backgroundColor = [UIColor colorWithHexString:@"#CCCCCC"];
+            [weakSelf.allBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [weakSelf.allBtn setTitle:@"录入完成" forState:UIControlStateNormal];
         }
     };
@@ -339,19 +343,40 @@ static NSString *LWBatchAddWorkCellID = @"LWBatchAddWorkCell";
         NSLog(@"%@",responseObject);
         if (isSuccess) {
             if ([responseObject[@"code"] integerValue] == 0) {
-                if ([responseObject[@"data"] integerValue] == 1) {
-                    [[UIApplication sharedApplication].keyWindow showLoadingMeg:@"保存成功" time:MESSAGE_SHOW_TIME];
+                
+                NSArray <LWWorkRecordListDataModel *> *arr = [LWWorkRecordListDataModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"workRecordList"]];
+                
+                
+                if (arr.count > 0) {
+                    [[UIApplication sharedApplication].keyWindow showLoadingMeg:@"添加成功" time:MESSAGE_SHOW_TIME];
+                    [self.navigationController popViewControllerAnimated:YES];
+                    [self.navigationController popViewControllerAnimated:NO];
+
+                    LWWorkTableView *v = self.superViewArr[0];
+                    [v.listArray addObjectsFromArray:arr];
+                    [v NodataView];
+                    [v.tableview reloadData];
+                    
+                    if (arr[0].workStatus.integerValue == 1) {
+                        LWWorkTableView *v2 = self.superViewArr[2];
+                        [v2.listArray addObjectsFromArray:arr];
+                        [v2 NodataView];
+                        [v2.tableview reloadData];
+                        
+                    }else{
+                        LWWorkTableView *v2 = self.superViewArr[1];
+                        [v2.listArray addObjectsFromArray:arr];
+                        [v2 NodataView];
+                        [v2.tableview reloadData];
+                    }
                     for (LWWorkTableView *v in self.superViewArr) {
                         [v GetWorkRecord];
-                        [v.tableview reloadData];
                     }
                     
-                    [self.navigationController popViewControllerAnimated:YES];
-                    [self.navigationController popViewControllerAnimated:YES];
-                    
                 }else{
-                    [[UIApplication sharedApplication].keyWindow showLoadingMeg:@"保存失败,请稍后再试" time:MESSAGE_SHOW_TIME];
+                    [[UIApplication sharedApplication].keyWindow showLoadingMeg:@"添加失败,请稍后再试" time:MESSAGE_SHOW_TIME];
                 }
+                
             }else{
                 [[UIApplication sharedApplication].keyWindow showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
             }

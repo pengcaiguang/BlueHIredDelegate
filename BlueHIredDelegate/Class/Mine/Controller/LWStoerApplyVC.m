@@ -11,7 +11,7 @@
 #import "LPDurationView.h"
 #import "LWShopApplyModel.h"
 
-@interface LWStoerApplyVC () <AddressPickerViewDelegate,UITextFieldDelegate>
+@interface LWStoerApplyVC () <AddressPickerViewDelegate,UITextFieldDelegate,UITextViewDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *joinBtn;
 @property (weak, nonatomic) IBOutlet UIButton *directBtn;
 
@@ -79,9 +79,51 @@
     self.worksType.delegate = self;
     self.worksArea.delegate = self;
     self.storeAddress.delegate = self;
+    self.Address.delegate = self;
 
+    self.Address.textContainer.lineFragmentPadding = 0.0;
+    self.Address.textContainerInset = UIEdgeInsetsMake(LENGTH_SIZE(7), CGFLOAT_MIN, 0, 0);
+    self.Address.placeholderTextColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    
+    
     [self requestQueryShopApply];
     
+}
+
+
+- (void)textViewDidChange:(UITextView *)textField{
+    /**
+     *  最大输入长度,中英文字符都按一个字符计算
+     */
+    static int kMaxLength = 30;
+    if (self.Address == textField) {
+        kMaxLength = 30;
+    }
+    
+    NSString *toBeString = textField.text;
+    // 获取键盘输入模式
+    NSString *lang = [[UITextInputMode currentInputMode] primaryLanguage];
+    // 中文输入的时候,可能有markedText(高亮选择的文字),需要判断这种状态
+    // zh-Hans表示简体中文输入, 包括简体拼音，健体五笔，简体手写
+    if ([lang isEqualToString:@"zh-Hans"]) {
+        UITextRange *selectedRange = [textField markedTextRange];
+        //获取高亮选择部分
+        UITextPosition *position = [textField positionFromPosition:selectedRange.start offset:0];
+        // 没有高亮选择的字，表明输入结束,则对已输入的文字进行字数统计和限制
+        if (!position) {
+            if (toBeString.length > kMaxLength) {
+                // 截取子串
+                textField.text = [toBeString substringToIndex:kMaxLength];
+            }
+        } else { // 有高亮选择的字符串，则暂不对文字进行统计和限制
+        }
+    } else {
+        // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
+        if (toBeString.length > kMaxLength) {
+            // 截取子串
+            textField.text = [toBeString substringToIndex:kMaxLength];
+        }
+    }
 }
 
  
@@ -230,10 +272,10 @@
         
         self.shopTypeLabel.text = model.data.shopType.integerValue == 1? @"加盟店":@"直营店";
         self.worksTypeLabel.text = [NSString stringWithFormat:@"%@ | %@ | %@",
-                                    self.WorkTypeArr[model.data.workType.integerValue-1],
+                                    model.data.workType.integerValue>0?self.WorkTypeArr[model.data.workType.integerValue-1]:@"",
                                     model.data.workRange,
-                                    model.data.realShop.integerValue?@"有实体门店":@"无实体门店"];
-        if (model.data.extAddress.length>0) {
+                                    model.data.realShop.integerValue==0?@"有实体门店":@"无实体门店"];
+        if (model.data.shopAddress.length>0) {
             [self.AddressLabel setImage:[UIImage imageNamed:@"add"] forState:UIControlStateNormal];
             [self.AddressLabel setTitle:[NSString stringWithFormat:@" %@%@",model.data.shopAddress,model.data.extAddress] forState:UIControlStateNormal];
             self.LayoutConstraint_View_bottom.constant = LENGTH_SIZE(47);
@@ -254,18 +296,25 @@
             self.Title2.textColor = [UIColor baseColor];
             self.Time2.text = [NSString convertStringToTime:model.data.setTime];
             self.againBtn.hidden = YES;
+            self.OutView2.backgroundColor = [UIColor colorWithHexString:@"#FF5353" alpha:0.0];
 
         }else if (model.data.status.integerValue == 2){
-            self.Title2.text = [NSString stringWithFormat:@"审核失败（理由：%@）",[LPTools isNullToString:model.data.remark]];
-            self.Title2.textColor = [UIColor colorWithHexString:@"#FF5353"];
-            NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.Title2.text];
-            [string addAttributes:@{NSFontAttributeName: FONT_SIZE(14)} range:NSMakeRange(4, self.Title2.text.length-4)];
-            self.Title2.attributedText = string;
+            if (model.data.remark.length>0) {
+                self.Title2.text = [NSString stringWithFormat:@"审核失败（理由：%@）",[LPTools isNullToString:model.data.remark]];
+                self.Title2.textColor = [UIColor colorWithHexString:@"#FF5353"];
+                NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:self.Title2.text];
+                [string addAttributes:@{NSFontAttributeName: FONT_SIZE(14)} range:NSMakeRange(4, self.Title2.text.length-4)];
+                self.Title2.attributedText = string;
+            }else{
+                self.Title2.text = @"审核失败";
+                self.Title2.textColor = [UIColor colorWithHexString:@"#FF5353"];
+            }
+            
 
             self.Time2.text = [NSString convertStringToTime:model.data.setTime];
             self.LineView.backgroundColor = [UIColor colorWithHexString:@"#FFCBCB"];
             self.InView2.backgroundColor = [UIColor colorWithHexString:@"#FF5353"];
-            self.OutView2.backgroundColor = [UIColor colorWithHexString:@"#FF5353" alpha:0.3];
+            self.OutView2.backgroundColor = [UIColor colorWithHexString:@"#FF5353" alpha:0.0];
             self.againBtn.hidden = NO;
 
         }

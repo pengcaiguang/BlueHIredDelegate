@@ -62,6 +62,7 @@
 @property (nonatomic, copy) NSString *workTypeName;
 @property (nonatomic, copy) NSString *workUrl;
 @property (nonatomic, copy) NSString *workWatchStatus;
+
 @end
 
 
@@ -78,7 +79,7 @@
 @property (nonatomic, copy) NSNumber *isApply;
 @property (nonatomic, copy) NSString *key;
 @property (nonatomic, copy) NSNumber *lendType;
-@property (nonatomic, copy) NSNumber *manageMoney;
+@property (nonatomic, copy) NSString *manageMoney;
 @property (nonatomic, copy) NSNumber *maxNumber;
 @property (nonatomic, copy) NSString *mechanismAddress;
 @property (nonatomic, copy) NSString *mechanismDetails;
@@ -104,6 +105,14 @@
 @property (nonatomic, copy) NSString *workWatchStatus;
 @property (nonatomic, copy) NSString *reStatus;
 @property (nonatomic, copy) NSString *age;
+@property (nonatomic, copy) NSString *addWorkMoney;
+@property (nonatomic, copy) NSString *shopReStatus;
+@property (nonatomic, copy) NSString *shopReMoney;
+@property (nonatomic, copy) NSString *shopAddWorkMoney;
+@property (nonatomic, copy) NSString *maxAddWorkMoney;
+@property (nonatomic, copy) NSString *maxReMoney;
+@property (nonatomic, copy) NSString *maxReStatus;
+@property (nonatomic, copy) NSString *workHide;
 
 @end
 @interface LPWorklistDataWorkBarsListModel : NSObject

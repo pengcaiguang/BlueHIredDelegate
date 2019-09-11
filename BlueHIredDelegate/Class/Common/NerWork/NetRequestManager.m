@@ -50,7 +50,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
  
                 NSMutableDictionary *cookieProperties = [NSMutableDictionary dictionary];
                 [cookieProperties setObject:@"user" forKey:NSHTTPCookieName];
-                [cookieProperties setObject:[kUserDefaultsValue(COOKIES) substringFromIndex:5] forKey:NSHTTPCookieValue];
+                [cookieProperties setObject:[kUserDefaultsValue(COOKIES) substringFromIndex:8] forKey:NSHTTPCookieValue];
                 [cookieProperties setObject:BaseRequestCookie forKey:NSHTTPCookieDomain];
                 [cookieProperties setObject:BaseRequestCookie forKey:NSHTTPCookieOriginURL];
                 [cookieProperties setObject:@"/" forKey:NSHTTPCookiePath];
@@ -116,7 +116,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
                     NSString *cookie = [[setCookie componentsSeparatedByString:@";"] objectAtIndex:0];
                     NSLog(@"cookie : %@", cookie); // 这里可对cookie进行存储
                     NSString *cookiejiemi =  [NetRequestManager decodeFromPercentEscapeString:cookie];
-                    NSDictionary *dic = [NetRequestManager dictionaryWithJsonString:[cookiejiemi substringFromIndex:5]];
+                    NSDictionary *dic = [NetRequestManager dictionaryWithJsonString:[cookiejiemi substringFromIndex:8]];
                     //                     [LPTools shareInstance].UserRole = [dic[@"role"] integerValue];
                     if (dic) {
                         kUserDefaultsSave(dic[@"role"], USERDATA);
@@ -185,7 +185,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
             if (kUserDefaultsValue(COOKIES)) {
                 NSMutableDictionary *cookieProperties = [NSMutableDictionary dictionary];
                 [cookieProperties setObject:@"user" forKey:NSHTTPCookieName];
-                [cookieProperties setObject:[kUserDefaultsValue(COOKIES) substringFromIndex:5] forKey:NSHTTPCookieValue];
+                [cookieProperties setObject:[kUserDefaultsValue(COOKIES) substringFromIndex:8] forKey:NSHTTPCookieValue];
                 [cookieProperties setObject:BaseRequestCookie forKey:NSHTTPCookieDomain];
                 [cookieProperties setObject:BaseRequestCookie forKey:NSHTTPCookieOriginURL];
                 [cookieProperties setObject:@"/" forKey:NSHTTPCookiePath];
@@ -214,7 +214,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
                      NSString *cookie = [[setCookie componentsSeparatedByString:@";"] objectAtIndex:0];
                      NSLog(@"cookie : %@", cookie); // 这里可对cookie进行存储
                      NSString *cookiejiemi =  [NetRequestManager decodeFromPercentEscapeString:cookie];
-                     NSDictionary *dic = [NetRequestManager dictionaryWithJsonString:[cookiejiemi substringFromIndex:5]];
+                     NSDictionary *dic = [NetRequestManager dictionaryWithJsonString:[cookiejiemi substringFromIndex:8]];
 //                     [LPTools shareInstance].UserRole = [dic[@"role"] integerValue];
                      if (dic) {
                          kUserDefaultsSave(dic[@"role"], USERDATA);

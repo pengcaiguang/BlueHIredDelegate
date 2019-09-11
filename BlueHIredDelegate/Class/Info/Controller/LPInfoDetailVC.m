@@ -20,7 +20,14 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
 @property(nonatomic,strong) LPInfoDetailModel *DetailModel;
 @property(nonatomic,strong) UIButton *Agreedbutton;
 @property(nonatomic,strong) LPSelectBindbankcardModel *BankcardModel;
-
+@property(nonatomic,strong) UILabel *titleLabel;
+@property(nonatomic,strong) UILabel *timeLabel;
+@property(nonatomic,strong) UILabel *detailLabel;
+@property(nonatomic,strong) UILabel *TLabel;
+@property(nonatomic,strong) UILabel *textView;
+@property(nonatomic,strong) UIView *BGView;
+@property(nonatomic,strong) UIView *cancelbutton2;
+@property(nonatomic,strong) UIImageView *imageView;
 
 @end
 
@@ -33,32 +40,64 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.title = @"消息详情";
     [self requestQueryInfodetail];
-//    [self setupUI];
+    [self setupUI];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    //加在这里是OK的
+    [self setViewShapeLayer:self.TLabel CornerRadii:12 byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomRight ];
+
 }
 
 
-
+-(void)setViewShapeLayer:(UIView *) View CornerRadii:(CGFloat) Radius byRoundingCorners:(UIRectCorner)corners{
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(View.bounds.origin.x,
+                                                                                View.bounds.origin.y,
+                                                                                View.bounds.size.width,
+                                                                                View.bounds.size.height)
+                                                   byRoundingCorners:corners
+                                                         cornerRadii:CGSizeMake(Radius, Radius)];
+    CAShapeLayer *maskLayer = [CAShapeLayer layer];
+    maskLayer.frame = CGRectMake(View.bounds.origin.x,
+                                 (View.bounds.origin.y),
+                                 (View.bounds.size.width),
+                                 (View.bounds.size.height)) ;
+    maskLayer.path = maskPath.CGPath;
+    View.layer.mask = maskLayer;
+    
+    
+}
 
 -(void)setupUI{
+    
+    UIView *headV = [[UIView alloc] init];
+    [self.view addSubview:headV];
+    [headV mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.mas_offset(0);
+        make.height.mas_offset(LENGTH_SIZE(10));
+    }];
+    headV.backgroundColor = [UIColor colorWithHexString:@"F5F5F5"];
+
     UILabel *titleLabel = [[UILabel alloc]init];
     [self.view addSubview:titleLabel];
+    self.titleLabel = titleLabel;
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(LENGTH_SIZE(13));
-        make.top.mas_equalTo(LENGTH_SIZE(13));
+        make.top.mas_equalTo(LENGTH_SIZE(28));
         make.right.mas_equalTo(LENGTH_SIZE(-13));
     }];
-    titleLabel.text = self.DetailModel.informationTitle;
     titleLabel.font = [UIFont boldSystemFontOfSize:FontSize(17)];
     titleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     
     UILabel *timeLabel = [[UILabel alloc]init];
     [self.view addSubview:timeLabel];
+    self.timeLabel = timeLabel;
     [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(LENGTH_SIZE(13));
         make.top.equalTo(titleLabel.mas_bottom).offset(LENGTH_SIZE(10));
         make.right.mas_equalTo(LENGTH_SIZE(-13));
     }];
-    timeLabel.text = [NSString convertStringToTime:[self.DetailModel.time stringValue]];
     timeLabel.font = [UIFont systemFontOfSize:FontSize(13)];
     timeLabel.textColor = [UIColor colorWithHexString:@"#999999"];
     
@@ -74,18 +113,19 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     
     UILabel *detailLabel = [[UILabel alloc]init];
     [self.view addSubview:detailLabel];
+    self.detailLabel = detailLabel;
     [detailLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(LENGTH_SIZE(13));
         make.top.equalTo(timeLabel.mas_bottom).offset(LENGTH_SIZE(18));
         make.right.mas_equalTo(LENGTH_SIZE(-13));
     }];
-    detailLabel.text = self.DetailModel.informationDetails;
     detailLabel.numberOfLines = 0;
     detailLabel.font = [UIFont systemFontOfSize:FontSize(15)];
     detailLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     
     UIView *BGView = [[UIView alloc] init];
     [self.view addSubview:BGView];
+    self.BGView = BGView;
     [BGView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.mas_offset(0);
         make.top.equalTo(detailLabel.mas_bottom).offset(LENGTH_SIZE(24));
@@ -94,6 +134,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     
     UILabel *TLabel = [[UILabel alloc] init];
     [BGView addSubview:TLabel];
+    self.TLabel = TLabel;
     [TLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_offset(LENGTH_SIZE(10));
         make.left.mas_offset(0);
@@ -103,14 +144,15 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     TLabel.textColor = [UIColor whiteColor];
     TLabel.backgroundColor = [UIColor baseColor];
     TLabel.font = FONT_SIZE(15);
-    TLabel.text = @"店员须知";
-    TLabel.textAlignment = NSTextAlignmentCenter;
-    [TLabel layoutIfNeeded];
-    [LPTools setViewShapeLayer:TLabel CornerRadii:12 byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomRight ];
+    TLabel.text = @"  店员须知";
+//    TLabel.textAlignment = NSTextAlignmentLeft;
+//    [TLabel layoutIfNeeded];
+//    [LPTools setViewShapeLayer:TLabel CornerRadii:12 byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomRight ];
     
     
     UILabel *textView = [[UILabel alloc] init];
     [BGView addSubview:textView];
+    self.textView = textView;
     [textView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(LENGTH_SIZE(13));
         make.right.mas_equalTo(LENGTH_SIZE(-13));
@@ -120,7 +162,6 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     textView.numberOfLines = 0;
     textView.font = FONT_SIZE(15);
     textView.layer.cornerRadius = 10;
-    textView.text = @"1、成为加盟店店员前,您邀请的员工仍归属您自己，相应的奖励金额请在个人中心的邀请奖励中查看。\n\n2、成为加盟店店员后,您邀请的员工都归属您加入的加盟店,您邀请员工将不再由本平台进行奖励，而是由您所在的加盟店店主进行发放，具体奖励额度请您与店主进行线下协商。本平台概不负责！\n\n3、若要成为加盟店的店员必须进行工资卡绑定！";
     textView.textColor = [UIColor colorWithHexString:@"#666666"];
     
     _Agreedbutton = [[UIButton alloc] init];
@@ -139,6 +180,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
 
     UIButton *cancelbutton2 = [[UIButton alloc] init];
     [self.view addSubview:cancelbutton2];
+    self.cancelbutton2 = cancelbutton2;
     [cancelbutton2 mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(LENGTH_SIZE(18));
         make.right.equalTo(self.Agreedbutton.mas_left).offset(LENGTH_SIZE(-20));
@@ -155,6 +197,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     
     UIImageView *imageView = [[UIImageView alloc] init];
     [self.view addSubview:imageView];
+    self.imageView = imageView;
     [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(BGView.mas_bottom).offset(LENGTH_SIZE(0));
         make.right.mas_offset(LENGTH_SIZE(-13));
@@ -187,6 +230,8 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
     
 
 }
+
+
 
 -(void)TouchAgreedbutton{
     [self requestSelectBindbankcard];
@@ -233,7 +278,41 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
 }
 
 
+- (void)setDetailModel:(LPInfoDetailModel *)DetailModel{
+    _DetailModel = DetailModel;
+    self.titleLabel.text = DetailModel.informationTitle;
+    self.timeLabel.text = [NSString convertStringToTime:[DetailModel.time stringValue]];
+    self.detailLabel.text = DetailModel.informationDetails;
 
+    self.textView.text = [NSString stringWithFormat:@"%@",[LPTools isNullToString:DetailModel.rule]];
+
+    if (DetailModel.type.integerValue == 4) {
+        if (self.DetailModel.inviteStatus.integerValue == 0) {
+            self.BGView.hidden = NO;
+            self.Agreedbutton.hidden = NO;
+            self.cancelbutton2.hidden = NO;
+            self.imageView.hidden = YES;
+        }else if (self.DetailModel.inviteStatus.integerValue == 1){
+            self.BGView.hidden = NO;
+            self.Agreedbutton.hidden = YES;
+            self.cancelbutton2.hidden = YES;
+            self.imageView.hidden = NO;
+            self.imageView.image = [UIImage imageNamed:@"icon_yes"];
+        }else if (self.DetailModel.inviteStatus.integerValue == 2){
+            self.BGView.hidden = NO;
+            self.Agreedbutton.hidden = YES;
+            self.cancelbutton2.hidden = YES;
+            self.imageView.hidden = NO;
+            self.imageView.image = [UIImage imageNamed:@"icon_no"];
+        }
+    }else{
+        self.BGView.hidden = YES;
+        self.Agreedbutton.hidden = YES;
+        self.cancelbutton2.hidden = YES;
+    }
+    
+    
+}
 
 
 -(void)requestQueryInfodetail{
@@ -245,7 +324,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
         if (isSuccess) {
             if ([responseObject[@"code"] integerValue] == 0) {
                 self.DetailModel = [LPInfoDetailModel mj_objectWithKeyValues:responseObject[@"data"]];
-                [self setupUI];
+//                [self setupUI];
             }else{
                 [self.view showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
             }
@@ -296,4 +375,7 @@ static NSString *RSAPrivateKey = @"MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAA
         }
     }];
 }
+
+
+
 @end

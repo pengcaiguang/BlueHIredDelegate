@@ -406,7 +406,7 @@
                             </userDefinedRuntimeAttributes>
                         </textField>
                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d57-cX-rBf" customClass="IQTextView">
-                            <rect key="frame" x="142" y="118" width="220" height="46"/>
+                            <rect key="frame" x="142" y="111" width="220" height="46"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="46" id="nOe-z1-TCN">
@@ -419,6 +419,7 @@
                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="请输入门店详细地址"/>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </textView>
                     </subviews>
@@ -464,7 +465,7 @@
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </constraint>
-                        <constraint firstItem="d57-cX-rBf" firstAttribute="top" secondItem="X7p-yc-Vcz" secondAttribute="bottom" constant="17" id="Rdb-jG-Y4z">
+                        <constraint firstItem="d57-cX-rBf" firstAttribute="top" secondItem="X7p-yc-Vcz" secondAttribute="bottom" constant="10" id="Rdb-jG-Y4z">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="adapterScreen" value="YES"/>
                             </userDefinedRuntimeAttributes>
@@ -608,7 +609,7 @@
                                         <constraint firstAttribute="height" constant="1" id="Pe7-3v-53m"/>
                                     </constraints>
                                 </view>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S4i-19-hQf">
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S4i-19-hQf">
                                     <rect key="frame" x="13" y="110.5" width="349" height="29"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <state key="normal">

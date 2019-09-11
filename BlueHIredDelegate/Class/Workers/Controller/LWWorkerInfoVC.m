@@ -322,7 +322,13 @@
 
 -(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
+    //这里的if时候为了获取删除操作,如果没有次if会造成当达到字数限制后删除键也不能使用的后果.
+    if (range.length == 1 && string.length == 0) {
+        return YES;
+    }
+    
     if (textField == self.DLunit || textField == self.SubsidyMoney) {
+        
         // 控制金额输入格式
         NSString * str = [NSString stringWithFormat:@"%@%@",textField.text,string];
         //匹配以0开头的数字
@@ -474,13 +480,32 @@
         NSLog(@"%@",responseObject);
         if (isSuccess) {
             if ([responseObject[@"code"] integerValue] == 0) {
-                if ([responseObject[@"data"] integerValue] == 1) {
+                
+                NSArray <LWWorkRecordListDataModel *> *arr = [LWWorkRecordListDataModel mj_objectArrayWithKeyValuesArray:responseObject[@"data"][@"workRecordList"]];
+                
+
+                if (arr.count > 0) {
                     [[UIApplication sharedApplication].keyWindow showLoadingMeg:@"添加成功" time:MESSAGE_SHOW_TIME];
                     [self.navigationController popViewControllerAnimated:YES];
+                    LWWorkTableView *v = self.superViewArr[0];
+                    [v.listArray addObjectsFromArray:arr];
+                    [v NodataView];
+                    [v.tableview reloadData];
                     
+                    if (arr[0].workStatus.integerValue == 1) {
+                        LWWorkTableView *v2 = self.superViewArr[2];
+                        [v2.listArray addObjectsFromArray:arr];
+                        [v2 NodataView];
+                        [v2.tableview reloadData];
+                        
+                    }else{
+                        LWWorkTableView *v2 = self.superViewArr[1];
+                        [v2.listArray addObjectsFromArray:arr];
+                        [v2 NodataView];
+                        [v2.tableview reloadData];
+                    }
                     for (LWWorkTableView *v in self.superViewArr) {
                         [v GetWorkRecord];
-                        [v.tableview reloadData];
                     }
                     
                 }else{

@@ -20,7 +20,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
 @interface AppDelegate ()
 @property (nonatomic, strong) TencentOAuth *tencentOAuth;
 @property (nonatomic, strong) NSString *version;
-
+@property (nonatomic, strong) UIAlertController *UpdateAlert;
 @end
 
 @implementation AppDelegate
@@ -37,7 +37,8 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
     manager.keyboardDistanceFromTextField = LENGTH_SIZE(60);
     [WXApi registerApp:WXAPPID];
     _tencentOAuth = [[TencentOAuth alloc] initWithAppId:QQAPPID andDelegate:self];
- 
+    // 启动图片延时: 1秒
+    [NSThread sleepForTimeInterval:1];
     if (AlreadyLogin) {
 //
         [self  requestUserMaterial:1];
@@ -45,7 +46,6 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
        [self showLogin];
     }
     
-    [self requestQueryDownload];
     return YES;
 }
 
@@ -56,7 +56,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
     UIWindow* window = self.window;
     navigationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [UIView transitionWithView:window
-                      duration:0.5
+                      duration:0.2
                        options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
                         BOOL oldState = [UIView areAnimationsEnabled];
@@ -99,11 +99,13 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [self requestQueryDownload];
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+
 }
 
 
@@ -238,7 +240,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
                 UIWindow* window = self.window;
                 self.mainTabBarController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
                 [UIView transitionWithView:window
-                                  duration:0.5
+                                  duration:0.2
                                    options:UIViewAnimationOptionTransitionCrossDissolve
                                 animations:^{
                                     BOOL oldState = [UIView areAnimationsEnabled];
@@ -266,7 +268,7 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
     [NetApiManager requestQueryDownload:dic withHandle:^(BOOL isSuccess, id responseObject) {
         NSLog(@"%@",responseObject);
         if (isSuccess) {
-            if (responseObject[@"code"] == 0) {
+            if ([responseObject[@"code"] integerValue] == 0) {
                 if (responseObject[@"data"] != nil &&
                     [responseObject[@"data"][@"version"] length]>0) {
                     if (self.version.floatValue <  [responseObject[@"data"][@"version"] floatValue]  ) {
@@ -287,14 +289,35 @@ static AFHTTPSessionManager * afHttpSessionMgr = NULL;
 //3. 弹框提示
 -(void)creatAlterView:(NSString *)msg{
     UIAlertController *alertText = [UIAlertController alertControllerWithTitle:@"更新提醒" message:msg preferredStyle:UIAlertControllerStyleAlert];
-    //增加按钮
-    [alertText addAction:[UIAlertAction actionWithTitle:@"我再想想" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-    }]];
+    self.UpdateAlert = alertText;
     [alertText addAction:[UIAlertAction actionWithTitle:@"立即更新" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        NSString *str = @"itms-apps://itunes.apple.com/cn/app/id1441365926?mt=8"; //更换id即可
+        NSString *str = @"https://www.pgyer.com/icJM"; //更换id即可
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
     }]];
-    [[UIWindow visibleViewController] presentViewController:alertText animated:YES completion:nil];
+    if (AlreadyLogin) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [[UIWindow visibleViewController] presentViewController:alertText animated:YES completion:nil];
+        });
+    }else{
+        [[UIWindow visibleViewController] presentViewController:alertText animated:YES completion:nil];
+    }
+    
+    
+    
+//    NSString *str1 = [NSString stringWithFormat:@"更新提醒\n\n%@？",msg];
+//
+//    NSMutableAttributedString *str = [[NSMutableAttributedString alloc]initWithString:str1];
+////    [str addAttribute:NSForegroundColorAttributeName value:[UIColor baseColor] range:[str1 rangeOfString:msg]];
+//    [str addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:FontSize(17)] range:NSMakeRange(0,4)];
+//
+//    GJAlertMessage *alert = [[GJAlertMessage alloc]initWithTitle:str message:nil IsShowhead:YES backDismiss:YES textAlignment:0 buttonTitles:@[@"立即更新"] buttonsColor:@[[UIColor baseColor]] buttonsBackgroundColors:@[[UIColor whiteColor]] buttonClick:^(NSInteger buttonIndex) {
+//        if (buttonIndex) {
+//
+//        }
+//    }];
+//    [alert show];
+    
+    
 }
 
 

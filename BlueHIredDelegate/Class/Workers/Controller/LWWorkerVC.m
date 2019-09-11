@@ -42,7 +42,7 @@
     SelectView.backgroundColor =[UIColor whiteColor];
     NSArray *arr = @[@"全部",@"在职",@"待业"];
 
-    for (NSInteger i =0 ; i < 3 ; i++) {
+    for (NSInteger i =0 ; i < arr.count ; i++) {
         UIButton *btn = [[UIButton alloc] init];
         [SelectView addSubview:btn];
         [btn setTitleColor:[UIColor colorWithHexString:@"#999999"] forState:UIControlStateNormal];
@@ -82,8 +82,7 @@
             // Fallback on earlier versions
             make.bottom.mas_offset(0);
         }
-        make.left.mas_offset(0);
-
+        make.left.mas_equalTo(0);
         make.height.mas_offset(LENGTH_SIZE(48));
     }];
     allBtn.backgroundColor = [UIColor colorWithHexString:@"#3C93FF"];
@@ -95,16 +94,16 @@
     UIButton *addBtn = [[UIButton alloc] init];
     [self.view addSubview:addBtn];
     [addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_offset(0);
         if (@available(iOS 11.0, *)) {
             make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom).offset(0);
         } else {
             // Fallback on earlier versions
-            make.bottom.left.mas_offset(0);
+            make.bottom.mas_offset(0);
         }
         make.height.mas_offset(LENGTH_SIZE(48));
+        make.right.mas_equalTo(0);
         make.left.equalTo(allBtn.mas_right).offset(0);
-        make.width.equalTo(allBtn);
+        make.width.equalTo(allBtn.mas_width).offset(0);
     }];
     addBtn.backgroundColor = [UIColor baseColor];
     [addBtn setTitle:@"添加" forState:UIControlStateNormal];
@@ -130,7 +129,7 @@
     self.scrollview.showsHorizontalScrollIndicator = NO;
     self.scrollview.delegate = self;
  
-    for (NSInteger i =0 ; i < 3 ; i++) {
+    for (NSInteger i =0 ; i < arr.count ; i++) {
         LWWorkTableView *view = [[LWWorkTableView alloc] initWithFrame:CGRectMake(i*SCREEN_WIDTH,
                                                                                   0,
                                                                                   SCREEN_WIDTH,

@@ -39,7 +39,7 @@
     [self.UserImage yy_setImageWithURL:[NSURL URLWithString:model.userUrl] placeholder:[UIImage imageNamed:@"Head_image"]];
     self.UserName.text = model.userName;
     self.UserTel.text = model.userTel;
-    self.UserInTime.text = [NSString stringWithFormat:@"入职日期：%@",[NSString convertStringToYYYMMDD:model.setTime]];
+    self.UserInTime.text = [NSString stringWithFormat:@"入店日期：%@",[NSString convertStringToYYYMMDD:model.setTime]];
     
 }
 

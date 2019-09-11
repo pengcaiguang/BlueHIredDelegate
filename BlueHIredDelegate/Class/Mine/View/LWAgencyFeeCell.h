@@ -12,7 +12,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LWAgencyFeeCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UILabel *WorksType;
+@property (weak, nonatomic) IBOutlet UILabel *UserName;
+@property (weak, nonatomic) IBOutlet UILabel *Money;
+@property (weak, nonatomic) IBOutlet UILabel *DetailsLabel;
 @property (weak, nonatomic) IBOutlet UIButton *isShow;
 
 

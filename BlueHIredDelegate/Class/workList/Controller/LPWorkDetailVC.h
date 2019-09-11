@@ -8,13 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "LPWorklistModel.h"
+#import "LWMainView.h"
 
-typedef void (^LPWorkCollectionBlock)(void);
 
 @interface LPWorkDetailVC : LPBaseViewController
 
 @property(nonatomic,strong) LPWorklistDataWorkListModel *workListModel;
-@property(nonatomic,strong) LPWorkCollectionBlock CollectionBlock;
+
 @property(nonatomic,assign) BOOL isWorkOrder;
+
+
+@property (nonatomic,strong) NSMutableArray <LWMainView *>*superViewArr;
+
 
 @end

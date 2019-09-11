@@ -12,8 +12,12 @@
 #import "LWMyStallCell.h"
 #import "LWMyStaffModel.h"
 #import "LPMainSearchVC.h"
+#import "LWMyStall2Cell.h"
+#import "LWMyStaffModelV2.h"
+#import "LWEntryRecordVC.h"
 
 static NSString *LWMyStallCellID = @"LWMyStallCell";
+static NSString *LWMyStallCell2ID = @"LWMyStall2Cell";
 
 @interface LWMyStaff ()<LPMainSortAlertViewDelegate,UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong) UIButton *TypeBtn;
@@ -24,7 +28,10 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
 @property(nonatomic,strong) LPMainSortAlertView *sortAlertView;
 @property (nonatomic,strong) UITableView *tableview;
 @property (nonatomic,strong) NSMutableArray <LWMyStaffDataModel *>*listArray;
+@property (nonatomic,strong) NSMutableArray <LWMyStaffDataModelV2 *>*listArrayV2;
+
 @property (nonatomic,strong) LWMyStaffModel *model;
+@property (nonatomic,strong) LWMyStaffModelV2 *modelV2;
 @property (nonatomic,assign) NSInteger page;
 
 @property (nonatomic,strong) NSString *DateStr;
@@ -46,26 +53,44 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
 
     [self setViewinit];
     self.page = 1;
-    [self requestQueryGetStaffList];
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        [self requestQueryGetStaffListV2];
+    }else{
+        [self requestQueryGetStaffList];
+    }
+    
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    if (self.sortAlertView.touchButton.selected) {
+        [self.sortAlertView close];
+    }
 }
 
 -(void)setViewinit{
-    
-    
-    UIBarButtonItem *myButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search2"]
+    UIImage *BarImage =   [UIImage imageNamed:@"search2"];
+    BarImage = [BarImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    UIBarButtonItem *myButton = [[UIBarButtonItem alloc] initWithImage:BarImage
                                                                  style:UIBarButtonItemStylePlain
                                                                 target:self
                                                                 action:@selector(clickEvent)];
     self.navigationItem.rightBarButtonItem = myButton;
-    [self.navigationItem.rightBarButtonItem setTintColor:[UIColor baseColor]];
+//    [self.navigationItem.rightBarButtonItem setTintColor:[UIColor baseColor]];
     
     
     UIView *HeadView = [[UIView alloc] init];
     [self.view addSubview:HeadView];
     [HeadView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.mas_offset(0);
-        make.height.mas_offset(LENGTH_SIZE(44));
+        if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+            make.height.mas_offset(LENGTH_SIZE(0));
+        }else{
+          make.height.mas_offset(LENGTH_SIZE(44));
+        }
+        
     }];
+    HeadView.clipsToBounds = YES;
     
     [HeadView addSubview:self.TypeBtn];
     [HeadView addSubview:self.DateBtn];
@@ -117,7 +142,8 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
  #pragma mark Touch
 - (void)clickEvent{
     LPMainSearchVC *vc = [[LPMainSearchVC alloc] init];
-    vc.type = 1;
+    
+    vc.type = kAppDelegate.userMaterialModel.data.shopType.integerValue == 2 ? 3 : 1;
     [self.navigationController pushViewController:vc animated:YES];
 
 }
@@ -194,17 +220,30 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
 #pragma mark - TableViewDelegate & Datasource
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
- 
-    if (self.listArray[indexPath.row].isShow) {
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
         return LENGTH_SIZE(126);
+    }else{
+        if (self.listArray[indexPath.row].isShow) {
+            return LENGTH_SIZE(126);
+        }
+        return LENGTH_SIZE(66);
     }
-    return LENGTH_SIZE(66);
+    
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        return self.listArrayV2.count;
+    }
     return self.listArray.count;
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        LWMyStall2Cell *cell = [tableView dequeueReusableCellWithIdentifier:LWMyStallCell2ID];
+        cell.model = self.listArrayV2[indexPath.row];
+        return cell;
+    }
     LWMyStallCell *cell = [tableView dequeueReusableCellWithIdentifier:LWMyStallCellID];
     cell.model = self.listArray[indexPath.row];
     return cell;
@@ -213,11 +252,15 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    if (self.listArray[indexPath.row].workStatus.integerValue == 1 ||
-//        self.listArray[indexPath.row].workStatus.integerValue == 2) {
+    if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+        LWEntryRecordVC *vc = [[LWEntryRecordVC alloc] init];
+        vc.Listmodel = self.listArrayV2[indexPath.row];
+        [self.navigationController pushViewController:vc animated:YES];
+    }else{
         self.listArray[indexPath.row].isShow = !self.listArray[indexPath.row].isShow;
         [self.tableview reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//    }
+    }
+    
 
 }
 
@@ -237,6 +280,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             [self.tableview reloadData];
             if (model.data.count < 20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
         }else{
             if (self.page == 1) {
@@ -246,6 +290,42 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             }
         }
         if (self.listArray.count == 0) {
+            self.tableview.mj_footer.alpha = 0;
+            [self addNodataViewHidden:NO];
+        }else{
+            self.tableview.mj_footer.alpha = 1;
+            [self addNodataViewHidden:YES];
+        }
+    }else{
+        [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_ERROR_MESSAGE time:MESSAGE_SHOW_TIME];
+    }
+}
+
+
+- (void)setModelV2:(LWMyStaffModelV2 *)modelV2{
+    _modelV2 = modelV2;
+    if ([modelV2.code integerValue] == 0) {
+        if (self.page == 1) {
+            self.listArrayV2 = [NSMutableArray array];
+        }
+        if (modelV2.data.count > 0) {
+            self.NumberLabel.text = [NSString stringWithFormat:@"人数：%ld人",(long)modelV2.data[0].allNum.integerValue];
+            
+            self.page += 1;
+            [self.listArrayV2 addObjectsFromArray:modelV2.data];
+            [self.tableview reloadData];
+            if (modelV2.data.count < 20) {
+                [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArrayV2.count<20?YES:NO;
+            }
+        }else{
+            if (self.page == 1) {
+                [self.tableview reloadData];
+            }else{
+                [self.tableview.mj_footer endRefreshingWithNoMoreData];
+            }
+        }
+        if (self.listArrayV2.count == 0) {
             self.tableview.mj_footer.alpha = 0;
             [self addNodataViewHidden:NO];
         }else{
@@ -297,12 +377,22 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         _tableview.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
         _tableview.separatorColor = [UIColor colorWithHexString:@"#F5F5F5"];
         [_tableview registerNib:[UINib nibWithNibName:LWMyStallCellID bundle:nil] forCellReuseIdentifier:LWMyStallCellID];
+        [_tableview registerNib:[UINib nibWithNibName:LWMyStallCell2ID bundle:nil] forCellReuseIdentifier:LWMyStallCell2ID];
+
         _tableview.mj_header = [HZNormalHeader headerWithRefreshingBlock:^{
                 self.page = 1;
+            if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+                [self requestQueryGetStaffListV2];
+            }else{
                 [self requestQueryGetStaffList];
+            }
         }];
         _tableview.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+            if (kAppDelegate.userMaterialModel.data.shopType.integerValue == 2) {
+                [self requestQueryGetStaffListV2];
+            }else{
                 [self requestQueryGetStaffList];
+            }
         }];
         
     }
@@ -318,7 +408,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         [_TypeBtn setTitleColor:[UIColor colorWithHexString:@"#333333"] forState:UIControlStateNormal];
         [_TypeBtn setTitleColor:[UIColor baseColor] forState:UIControlStateSelected];
         [_TypeBtn setImage:[UIImage imageNamed:@"drop_down"] forState:UIControlStateNormal];
-        [_TypeBtn setImage:[UIImage imageNamed:@"drop_up"] forState:UIControlStateSelected];
+//        [_TypeBtn setImage:[UIImage imageNamed:@"drop_up"] forState:UIControlStateSelected];
         _TypeBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
         
         _TypeBtn.titleLabel.font = [UIFont systemFontOfSize:FontSize(15)];
@@ -337,7 +427,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         [_DateBtn setTitleColor:[UIColor colorWithHexString:@"#333333"] forState:UIControlStateNormal];
         [_DateBtn setTitleColor:[UIColor baseColor] forState:UIControlStateSelected];
         [_DateBtn setImage:[UIImage imageNamed:@"drop_down"] forState:UIControlStateNormal];
-        [_DateBtn setImage:[UIImage imageNamed:@"drop_up"] forState:UIControlStateSelected];
+//        [_DateBtn setImage:[UIImage imageNamed:@"drop_up"] forState:UIControlStateSelected];
         
         _DateBtn.titleLabel.font = [UIFont systemFontOfSize:FontSize(15)];
         _DateBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
@@ -394,5 +484,26 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
         }
     }];
 }
+
+-(void)requestQueryGetStaffListV2{
+    
+    NSDictionary *dic = @{@"page":@(self.page)};
+    
+    [NetApiManager requestQueryGetStaffListV2:dic withHandle:^(BOOL isSuccess, id responseObject) {
+        NSLog(@"%@",responseObject);
+        [self.tableview.mj_header endRefreshing];
+        [self.tableview.mj_footer endRefreshing];
+        if (isSuccess) {
+            if ([responseObject[@"code"] integerValue] == 0) {
+                self.modelV2 = [LWMyStaffModelV2 mj_objectWithKeyValues:responseObject];
+            }else{
+                [[UIApplication sharedApplication].keyWindow showLoadingMeg:responseObject[@"msg"] time:MESSAGE_SHOW_TIME];
+            }
+        }else{
+            [[UIApplication sharedApplication].keyWindow showLoadingMeg:NETE_REQUEST_ERROR time:MESSAGE_SHOW_TIME];
+        }
+    }];
+}
+
 
 @end

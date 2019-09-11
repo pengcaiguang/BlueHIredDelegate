@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSNumber *unreadTotal;
 @property (nonatomic, copy) NSNumber *shopUserId;
 @property (nonatomic, copy) NSNumber *inviteStatus;
+@property (nonatomic, copy) NSString *rule;
 
 @end
 

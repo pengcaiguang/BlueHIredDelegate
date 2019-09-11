@@ -100,6 +100,7 @@ static NSString *LWMyStallCellID = @"LWMyStallCell";
             [self.tableview reloadData];
             if (self.model.data.count < 20) {
                 [self.tableview.mj_footer endRefreshingWithNoMoreData];
+                self.tableview.mj_footer.hidden = self.listArray.count<20?YES:NO;
             }
         }else{
             if (self.page == 1) {

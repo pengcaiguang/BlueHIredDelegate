@@ -33,6 +33,7 @@ static NSString *PASSWORDUSERSAVE = @"PASSWORDUSERSAVE";
 @property (weak, nonatomic) IBOutlet UILabel *userAgreementLabel;
 
 
+@property (nonatomic,strong) dispatch_source_t DisTime;
 @property(nonatomic,strong) NSString *token;
 @property(nonatomic,strong) NSString *phone;
 @property(nonatomic,assign) BOOL keepPassword;
@@ -45,6 +46,8 @@ static NSString *PASSWORDUSERSAVE = @"PASSWORDUSERSAVE";
     [super viewDidLoad];
     [self initView];
     kAppDelegate.WXdelegate = self;
+    
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -316,7 +319,7 @@ static NSString *PASSWORDUSERSAVE = @"PASSWORDUSERSAVE";
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    
+    self.DisTime = _timer;
     dispatch_source_set_timer(_timer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行
     
     dispatch_source_set_event_handler(_timer, ^{
@@ -411,13 +414,29 @@ static NSString *PASSWORDUSERSAVE = @"PASSWORDUSERSAVE";
             if ([responseObject[@"code"] integerValue] == 0) {
                 [self.view showLoadingMeg:@"注册成功" time:MESSAGE_SHOW_TIME];
                 
-                kUserDefaultsSave(responseObject[@"data"], LOGINID);
-                if ([kUserDefaultsValue(LOGINID) integerValue]  != [kUserDefaultsValue(OLDLOGINID) integerValue]) {
-                    kUserDefaultsRemove(ERRORTIMES);
-                }
+                self.RphoneTextField.text= @"";
+                self.RCodeTextField.text= @"";
+                self.RpasswordTextField1.text= @"";
+                self.RpasswordTextField2.text= @"";
                 
-                kUserDefaultsSave(@"1", kLoginStatus);
-                [kAppDelegate showTabVc:1];
+              
+                dispatch_source_cancel(self.DisTime);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    //设置按钮的样式
+                    [self.getVerificationCodeButton setTitle:@"重新发送" forState:UIControlStateNormal];
+                    [self.getVerificationCodeButton setTitleColor:[UIColor baseColor] forState:UIControlStateNormal];
+                    self.getVerificationCodeButton.userInteractionEnabled = YES;
+                });
+                [self TouchSwitchBtn:self.LoginBtn];
+                
+//                kUserDefaultsSave(responseObject[@"data"], LOGINID);
+//                if ([kUserDefaultsValue(LOGINID) integerValue]  != [kUserDefaultsValue(OLDLOGINID) integerValue]) {
+//                    kUserDefaultsRemove(ERRORTIMES);
+//                }
+//
+//                kUserDefaultsSave(@"1", kLoginStatus);
+//                [kAppDelegate showTabVc:1];
             
             }else{
                 [self.view showLoadingMeg:responseObject[@"msg"] ? responseObject[@"msg"] : @"注册失败" time:MESSAGE_SHOW_TIME];

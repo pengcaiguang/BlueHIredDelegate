@@ -31,7 +31,7 @@
 @property (nonatomic, copy) NSNumber *isApply;
 @property (nonatomic, copy) NSString *key;
 @property (nonatomic, copy) NSNumber *lendType;
-@property (nonatomic, copy) NSNumber *manageMoney;
+@property (nonatomic, copy) NSString *manageMoney;
 @property (nonatomic, copy) NSNumber *maxNumber;
 @property (nonatomic, copy) NSString *mechanismAddress;
 @property (nonatomic, copy) NSString *mechanismDetails;
@@ -62,5 +62,14 @@
 @property (nonatomic, copy) NSString *y;
 @property (nonatomic, copy) NSString *teacherName;
 @property (nonatomic, copy) NSString *teacherPhone;
+@property (nonatomic, copy) NSString *addWorkMoney;
+@property (nonatomic, copy) NSString *reStatus;
+@property (nonatomic, copy) NSString *workHide;
+@property (nonatomic, copy) NSString *shopReStatus;
+@property (nonatomic, copy) NSString *shopReMoney;
+@property (nonatomic, copy) NSString *shopAddWorkMoney;
+@property (nonatomic, copy) NSString *maxAddWorkMoney;
+@property (nonatomic, copy) NSString *maxReMoney;
+@property (nonatomic, copy) NSString *maxReStatus;
 
 @end
